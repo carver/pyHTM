@@ -1,0 +1,8 @@
+As of Nov 22, 2010, Numenta has promised not to use it's patents and IP to come
+after people using HTMs in non-commercial, research applications.
+
+In the end, though, they hold patent rights and can change their mind whenever
+they want. Be sure you have checked their website for their latest stance
+before putting much effort in.
+
+http://www.numenta.com/about-numenta/licensing.php
