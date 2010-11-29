@@ -10,90 +10,78 @@ http://www.numenta.com/htm-overview/education.php
 
 from carver.htm import kth_score, neighbor_duty_cycle_max, average_receptive_field_size,\
     create_dendrite_segment
-
-MIN_OVERLAP = 5 #TODO choose a reasonable number
-PERMANENCE_INCREMENT = 0.04 #TODO choose a reasonable number
-PERMANENCE_DECREMENT = 0.04 #TODO choose a reasonable number
+from carver.htm.config import config
 
 #one column out of n should fire:
-desiredLocalActivity = 50 # TODO choose a reasonable number
+desiredLocalActivity = config.get('constants','desiredLocalActivity')
 
-def pool_spatial(htm, input):
+def pool_spatial(htm, inputData):
     '''
     A couple notable deviations:
     *column overlap boost and cutoff are swapped from pseudocode, details inline
     *time (t) removed from code - assuming that data is already sliced by time 
     '''
     
-    columns = htm.columns
+    _spatial_overlap(htm)
     
-    #Overlap, p 35
-    _spatial_overlap(columns)
-    
-    #Inhibition, p 35
-    activeColumns = _spatial_inhibition(columns)
+    activeColumns = _spatial_inhibition(htm)
             
-    #Learning, p 36
-    inhibitionRadius = _spatial_learning(columns, activeColumns)
+    inhibitionRadius = _spatial_learning(htm, activeColumns, inputData)
     
-    return inhibitionRadius
+    htm.inhibitionRadius = inhibitionRadius
 
-def pool_temporal(htm, input, learning=True):
-    #These phases can be written more pythonically, but it would lose the pseudocode feel
-    
-    #Phase 1, p40
+def pool_temporal(htm, inputData, learning=True):
     _temporal_phase1(htm, learning)
             
-    #Phase 2, p40
     updateSegments = _temporal_phase2(htm, learning)
     
-    #Phase 3, p42
     if learning:
         _temporal_phase3(htm, updateSegments)
     
-def _spatial_overlap(columns):
-    for c in columns:
-        c.overlap = 0
-        for s in c.synapsesConnected:
-            c.overlap += s.is_firing(input)
+def _spatial_overlap(htm, inputData):
+    'Overlap, p 35'
+    
+    for c in htm.columns:
+        c.overlap = len(c.synapses_firing(inputData))
             
         #The paper has conflicting information in the following lines.
         #The text implies boost before cutoff, the code: cutoff then boost. I 
         #chose boost first because I think the boost should help a column 
-        #overcome the cutoff. This is based solely on intuitin. 
+        #overcome the cutoff. This choice is based solely on intuition. 
         c.overlap *= c.boost
         
-        if c.overlap < MIN_OVERLAP:
+        if c.overlap < c.MIN_OVERLAP:
             c.overlap = 0
     
-def _spatial_inhibition(columns):
+def _spatial_inhibition(htm):
+    'Inhibition, p 35'
     activeColumns = []
-    for c in columns:
-        minLocalActivity = kth_score(c.neighbors, desiredLocalActivity)
+    for c in htm.columns:
+        minLocalActivity = kth_score(htm.neighbors(c), desiredLocalActivity)
         
         if c.overlap > 0 and c.overlap >= minLocalActivity:
             activeColumns.append(c)
     
     return activeColumns
 
-def _spatial_learning(columns, activeColumns):
+def _spatial_learning(htm, activeColumns, inputData):
+    'Learning, p 36'
     for c in activeColumns:
         for s in c.synapses:
-            if s.is_firing(input):
-                s.permanence += PERMANENCE_INCREMENT
-                s.permanence = min(s.permanence, 1.0)
+            if s.is_firing(inputData):
+                s.permanence_increment()
             else:
-                s.permanence += PERMANENCE_DECREMENT
-                s.permanence = max(s.permanence, 0.0)
+                s.permanence_decrement()
             
-    for c in columns:
+    for c in htm.columns:
         c.min_duty_cycle = 0.01 * neighbor_duty_cycle_max(c)
         c.duty_cycle = c.next_duty_cycle()
         c.boost = c.next_boost()
         
-    return average_receptive_field_size(columns)
+    return average_receptive_field_size(htm.columns)
 
 def _temporal_phase1(htm, learning):
+    'Phase 1, p40'
     for c in htm.columnsActive:
         buPredicted = False
         lcChosen = False
@@ -124,7 +112,9 @@ def _temporal_phase1(htm, learning):
             seg = create_dendrite_segment(htm, cell)
             cell.segments.append(seg)
             
-def _temporal_phase2(htm, input, learning):
+def _temporal_phase2(htm, inputData, learning):
+    'Phase 2, p40'
+    
     #hash from cell to a list of segments
     updateSegments = {}
     
@@ -140,12 +130,13 @@ def _temporal_phase2(htm, input, learning):
         #for each cell, grab the best segment. right now, this does not prevent 
         #duplication of learning on the best segment
         if learning and cell.predicting:
-            bestSeg = cell.best_potential_segment(input)
+            bestSeg = cell.best_potential_segment(inputData)
             updateSegments[cell].append(bestSeg)
     
     return updateSegments
 
 def _temporal_phase3(htm, updateSegments):
+    'Phase 3, p42'
     for cell in htm.allCells:
         if cell.learning:
             for seg in updateSegments[cell]:
@@ -153,6 +144,3 @@ def _temporal_phase3(htm, updateSegments):
         elif not cell.predicting and cell.predicted:
             for seg in updateSegments[cell]:
                 seg.adapt_down()
-
-if __name__ == '__main__':
-    pass

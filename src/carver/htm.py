@@ -5,12 +5,15 @@ Created on Nov 26, 2010
 
 Numenta docs are (c) Numenta
 '''
+from carver.htm.column import Column
+from carver.htm.config import config
+from numenta.htm import pool_spatial, pool_temporal
 
 def kth_score(columns, k):
     '''
     Numenta docs: Given the list of columns, return the kth highest overlap value
     '''
-    pass
+    return sorted(columns, key=lambda col: col.overlap)[k-1]
 
 def neighbor_duty_cycle_max(column):
     '''
@@ -18,6 +21,7 @@ def neighbor_duty_cycle_max(column):
     Numenta docs: Returns the maximum active duty cycle of the columns in the 
     given list of colmns  
     '''
+    #TODO NEXT implement column methods below: duty_cyle, neighbors
     return max([c.duty_cycle for c in column.neighbors])
 
 def average_receptive_field_size(columns):
@@ -46,4 +50,65 @@ def create_dendrite_segment(htm, cell):
     that have learnState output = 1 at time step t. 
     This function iterates through a list of segmentUpdate's and reinforces 
     '''
+    pass
+
+class HTM(object):
+    def __init__(self, width, length, cellsPerColumn):
+        
+        #columns is a 2d list of lists, where x and y should line up with indices
+        self._column_grid = []
+        for x in xrange(width):
+            columnsInX = []
+            for y in xrange(length):
+                columnsInX.append(Column(x, y, cellsPerColumn))
+            self._column_grid.append(columnsInX)
+        
+        self.width = width
+        self.length = length
+        self.inhibitionRadius = config.get('init', 'inhibitionRadius')
+        
+    @property
+    def columns(self):
+        for x in xrange(self.width):
+            for y in xrange(self.length):
+                yield self._column_grid[x][y]
+        
+    def initializeInput(self):
+        'assume 2d for now'
+        #TODO add synapses on input/proximal dendrites from each column to input
+        #TODO add synapses on sequential/distal dendrites from each cell to cell
+        #TODO more?
+        pass 
+    
+    def neighbors(self, column):
+        #boundries
+        startx = max(0, column.x - self.inhibitionRadius)
+        endx = min(self.width, column.x + self.inhibitionRadius)
+        starty = max(0, column.y - self.inhibitionRadius)
+        endy = min(self.length, column.y + self.inhibitionRadius)
+        
+        for x in xrange(startx, endx):
+            for y in xrange(starty, endy):
+                yield self._column_grid[x][y]
+
+if __name__ == '__main__':
+    htm = HTM(
+        config.get('init','htm_width'), 
+        config.get('init','htm_length'),
+        config.get('init','cells_per_column') 
+        )
+    
+    htm.initializeInput()
+    
+    #TODO enable real data input
+    dataTime1 = [[],[],[],[],[]] #2d format, same dimensions as htm (for now)
+    dataTime2 = [[],[],[],[],[]]
+    data = [dataTime1, dataTime2] 
+    
+    for inputData in data:
+        pool_spatial(htm, inputData)
+        pool_temporal(htm, inputData, learning=True)
+    
+    #TODO show output
+    #TODO serialize network state
     pass
