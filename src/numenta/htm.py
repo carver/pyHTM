@@ -11,6 +11,7 @@ http://www.numenta.com/htm-overview/education.php
 from carver.htm import kth_score, neighbor_duty_cycle_max, average_receptive_field_size,\
     create_dendrite_segment
 from carver.htm.config import config
+from carver.htm.synapse import CONNECTED_CUTOFF
 
 #one column out of n should fire:
 desiredLocalActivity = config.get('constants','desiredLocalActivity')
@@ -61,6 +62,9 @@ def _spatial_inhibition(htm):
         
         if c.overlap > 0 and c.overlap >= minLocalActivity:
             activeColumns.append(c)
+            c.input_active(True)
+        else:
+            c.input_active(False)
     
     return activeColumns
 
@@ -74,11 +78,15 @@ def _spatial_learning(htm, activeColumns, inputData):
                 s.permanence_decrement()
             
     for c in htm.columns:
-        c.min_duty_cycle = 0.01 * neighbor_duty_cycle_max(c)
-        c.duty_cycle = c.next_duty_cycle()
+        c.dutyCycleMin = 0.01 * neighbor_duty_cycle_max(c)
+        c.dutyCycleActive = c.get_duty_cycle_active()
         c.boost = c.next_boost()
         
-    return average_receptive_field_size(htm.columns)
+        c.dutyCycleOverlap = c.get_duty_cycle_overlap()
+        if c.dutyCycleOverlap < c.dutyCycleMin:
+            c.increase_permanences(0.1 * CONNECTED_CUTOFF)
+        
+    return average_receptive_field_size(htm.columns) #TODO
 
 def _temporal_phase1(htm, learning):
     'Phase 1, p40'

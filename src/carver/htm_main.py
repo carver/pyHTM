@@ -21,8 +21,7 @@ def neighbor_duty_cycle_max(column):
     Numenta docs: Returns the maximum active duty cycle of the columns in the 
     given list of colmns  
     '''
-    #TODO NEXT implement column methods below: duty_cyle, neighbors
-    return max([c.duty_cycle for c in column.neighbors])
+    return max((c.dutyCycleActive for c in column.neighbors))
 
 def average_receptive_field_size(columns):
     '''
@@ -60,7 +59,7 @@ class HTM(object):
         for x in xrange(width):
             columnsInX = []
             for y in xrange(length):
-                columnsInX.append(Column(x, y, cellsPerColumn))
+                columnsInX.append(Column(self, x, y, cellsPerColumn))
             self._column_grid.append(columnsInX)
         
         self.width = width
