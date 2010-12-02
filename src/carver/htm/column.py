@@ -33,7 +33,7 @@ class Column(object):
         self.dutyCycleMin = 0
         self.dutyCycleActive = 0
         self.dutyCycleOverlap = 0
-        self.detectingInput = False
+        self.active = False
         
     def add_synapse(self, x, y):
         'assume 2d input for now; only synapses on column are proximal synapses'
@@ -45,13 +45,10 @@ class Column(object):
     def increase_permanences(self, byAmount):
         for s in self.synapses:
             s.permanence_increment(byAmount)
-            
-    def input_active(self, active):
-        self.detectingInput = active
         
     def get_duty_cycle_active(self):
         newDutyCycle = AVG_SCALE*self.dutyCycleActive
-        if self.detectingInput:
+        if self.active:
             newDutyCycle += (1-AVG_SCALE)
         return newDutyCycle
     

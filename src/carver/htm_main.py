@@ -31,7 +31,11 @@ def average_receptive_field_size(columns):
     synapses (those with permanence values >= connectedPerm).  This is used 
     to determine the extent of lateral inhibition between columns. 
     '''
-    pass
+    radii = []
+    for c in columns:
+        for syn in c.synapsesConnected:
+            radii.append(((c.x-syn.x)**2, (c.y-syn.y)**2)**0.5)
+    return sum(radii)/len(radii)
 
 def create_dendrite_segment(htm, cell):
     '''
@@ -65,12 +69,17 @@ class HTM(object):
         self.width = width
         self.length = length
         self.inhibitionRadius = config.get('init', 'inhibitionRadius')
+        self.cellsPerColumn = cellsPerColumn
         
     @property
     def columns(self):
         for x in xrange(self.width):
             for y in xrange(self.length):
                 yield self._column_grid[x][y]
+                
+    @property
+    def columnsActive(self):
+        return filter(lambda c: c.active, self.columns)
         
     def initializeInput(self):
         'assume 2d for now'

@@ -62,9 +62,9 @@ def _spatial_inhibition(htm):
         
         if c.overlap > 0 and c.overlap >= minLocalActivity:
             activeColumns.append(c)
-            c.input_active(True)
+            c.active = True
         else:
-            c.input_active(False)
+            c.active = False
     
     return activeColumns
 
@@ -86,7 +86,7 @@ def _spatial_learning(htm, activeColumns, inputData):
         if c.dutyCycleOverlap < c.dutyCycleMin:
             c.increase_permanences(0.1 * CONNECTED_CUTOFF)
         
-    return average_receptive_field_size(htm.columns) #TODO
+    return average_receptive_field_size(htm.columns)
 
 def _temporal_phase1(htm, learning):
     'Phase 1, p40'
@@ -95,7 +95,7 @@ def _temporal_phase1(htm, learning):
         lcChosen = False
         for i in xrange(htm.cellsPerColumn):
             cell = c.cells[i]
-            if cell.predicted:
+            if cell.predicted: #TODO
                 seg = cell.mostActiveSegment
                 
                 #distal dendrite segments = sequence memory
