@@ -6,6 +6,7 @@ Created on Nov 26, 2010
 from carver.htm.cell import Cell
 from carver.htm.synapse import Synapse
 from carver.htm.config import config
+from carver.htm.segment import Segment
 
 #using an exponential average, so AS*old+(1-AS*current) => new
 AVG_SCALE = 0.995
@@ -23,10 +24,10 @@ class Column(object):
         
         '''
         self.htm = htm
-        self.cells = [Cell() for i in xrange(cellsPerColumn)]
+        self.cells = [Cell(htm) for i in xrange(cellsPerColumn)] #@UnusedVariable
         self.overlap = 0
-        #synapses on input/proximal dendrites, forced equal for whole column
-        self.synapses = []
+        #synapses on input/proximal dendrites, forced equal for whole column, in equivalent of single segment
+        self.segment = Segment(distal=False)
         self.boost = 1
         self.x = x
         self.y = y
@@ -35,16 +36,11 @@ class Column(object):
         self.dutyCycleOverlap = 0
         self.active = False
         
-    def add_synapse(self, x, y):
-        'assume 2d input for now; only synapses on column are proximal synapses'
-        self.synapses.append(Synapse(x,y))
-        
-    def synapses_firing(self, inputData):
-        return filter(lambda synapse: synapse.is_firing(), self.synapses)
+    def synapses_firing(self):
+        return self.segment.synapses_firing()
     
     def increase_permanences(self, byAmount):
-        for s in self.synapses:
-            s.permanence_increment(byAmount)
+        return self.segment.increase_permanences(byAmount)
         
     def get_duty_cycle_active(self):
         newDutyCycle = AVG_SCALE*self.dutyCycleActive
@@ -68,8 +64,31 @@ class Column(object):
         
     @property
     def synapsesConnected(self):
-        return filter(lambda synapse: synapse.connected, self.synapses)
+        return self.segment.synapsesConnected
     
     @property
     def neighbors(self):
         return self.htm.neighbors(self)
+    
+    @property
+    def bestCell(self):
+        bestCell = None
+        bestCellFiringSynapseCount = 0
+        
+        #find cell with best best matching segment
+        for cell in self.cells:
+            seg = cell.bestMatchingSegment
+            if len(seg.synapses_firing()) > bestCellFiringSynapseCount:
+                bestCellFiringSynapseCount = len(seg.synapses_firing())
+                bestCell = cell
+            
+        #if none, pick the one with the fewest synapses
+        if bestCell is None:
+            fewestSynapses = len(self.cells[0].synapses)
+            bestCell = self.cells[0]
+            for cell in self.cells[1:]:
+                if len(cell.synapses) < fewestSynapses:
+                    bestCell = cell
+                    fewestSynapses = len(cell.synapses)
+            
+        return bestCell

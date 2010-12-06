@@ -8,6 +8,12 @@ Numenta docs are (c) Numenta
 from carver.htm.column import Column
 from carver.htm.config import config
 from numenta.htm import pool_spatial, pool_temporal
+from carver.htm.segment import Segment
+from carver.htm.input import InputCell
+from carver.htm.synapse import SYNAPSES_PER_SEGMENT, Synapse, CONNECTED_CUTOFF,\
+    PERMANENCE_INCREMENT
+from random import random
+from math import exp
 
 def kth_score(columns, k):
     '''
@@ -34,7 +40,7 @@ def average_receptive_field_size(columns):
     radii = []
     for c in columns:
         for syn in c.synapsesConnected:
-            radii.append(((c.x-syn.x)**2, (c.y-syn.y)**2)**0.5)
+            radii.append(((c.x-syn.input.x)**2, (c.y-syn.input.y)**2)**0.5)
     return sum(radii)/len(radii)
 
 def create_dendrite_segment(htm, cell):
@@ -47,11 +53,11 @@ def create_dendrite_segment(htm, cell):
     changes to segment s. Let activeSynapses be the list of active synapses 
     where the originating cells have their activeState output = 1 at time step t.  
     (This list is empty if s = -1 since the segment doesn't exist.) newSynapses 
-    is an optional argument that defaults to false. If newSynapses is true, then 
+    is an optional argument that defaults to false. 
+    **If newSynapses is true, then 
     newSynapseCount - count(activeSynapses) synapses are added to 
     activeSynapses. These synapses are randomly chosen from the set of cells 
     that have learnState output = 1 at time step t. 
-    This function iterates through a list of segmentUpdate's and reinforces 
     '''
     pass
 
@@ -81,12 +87,34 @@ class HTM(object):
     def columnsActive(self):
         return filter(lambda c: c.active, self.columns)
         
-    def initializeInput(self):
-        'assume 2d for now'
-        #TODO add synapses on input/proximal dendrites from each column to input
+    def initializeInput(self, data):
+        '''assume 2d for now
+        Inspired by HTM doc 0.1.1, pg 34
+        '''
+        
+        inputWidth = len(data)
+        inputLength = len(data[0])
+        cellProxies = [[InputCell(x, y, data) for y in xrange(inputLength)] for x in xrange(inputWidth)]
+        
+        def rand_x():
+            return random.randint(0,inputWidth)
+        def rand_y():
+            return random.randint(0,inputWidth)
+        
+        #give starting permanence value near the threshold
+        #bias permanence up toward column center
+        for col in self.columns:
+            for i in xrange(SYNAPSES_PER_SEGMENT):
+                inputx = rand_x()
+                inputy = rand_y()
+                cellProxy = cellProxies[inputx][inputy]
+                rand_permanence = random.gauss(CONNECTED_CUTOFF, PERMANENCE_INCREMENT*2)
+                #permanence_locality_bias = 5*exp((distance/sigma)**2/2) #TODO
+                #permanence = cent_gauss + bias
+                #syn = Synapse(cellProxy, permanence=)
+                col.segment.add_synapse(cellProxy)
+                
         #TODO add synapses on sequential/distal dendrites from each cell to cell
-        #TODO more?
-        pass 
     
     def neighbors(self, column):
         #boundries
@@ -98,6 +126,12 @@ class HTM(object):
         for x in xrange(startx, endx):
             for y in xrange(starty, endy):
                 yield self._column_grid[x][y]
+                
+    @property
+    def cells(self):
+        for col in self.columns:
+            for cell in col.cells:
+                yield cell
 
 if __name__ == '__main__':
     htm = HTM(
@@ -109,13 +143,17 @@ if __name__ == '__main__':
     htm.initializeInput()
     
     #TODO enable real data input
-    dataTime1 = [[],[],[],[],[]] #2d format, same dimensions as htm (for now)
-    dataTime2 = [[],[],[],[],[]]
-    data = [dataTime1, dataTime2] 
+    data = [[],[],[],[],[]] #2d format, same dimensions as htm (for now)
     
-    for inputData in data:
-        pool_spatial(htm, inputData)
-        pool_temporal(htm, inputData, learning=True)
+    #TODO run data over time
+    for t in xrange(1):
+        pool_spatial(htm)
+        pool_temporal(htm, learning=True)
+        
+        #TODO update data array
+        
+        for cell in htm.cells:
+            cell.clockTick()
     
     #TODO show output
     #TODO serialize network state
