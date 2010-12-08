@@ -58,7 +58,7 @@ def _spatial_inhibition(htm):
     'Inhibition, p 35'
     activeColumns = []
     for col in htm.columns:
-        minLocalActivity = col.kth_score(desiredLocalActivity)
+        minLocalActivity = col.kth_neighbor(desiredLocalActivity)
         
         if col.overlap > 0 and col.overlap >= minLocalActivity:
             activeColumns.append(col)

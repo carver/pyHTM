@@ -12,6 +12,8 @@ class TestHTM(unittest.TestCase):
 
 
     def setUp(self):
+        self.htm = HTM()
+        self.data = [[1,0,1],[0,0,1]] #2d format, same dimensions as htm (for now)
         pass
 
 
@@ -20,9 +22,9 @@ class TestHTM(unittest.TestCase):
 
 
     def testInit(self):
-        htm = HTM()
-        data = [[1,0,1],[0,0,1]] #2d format, same dimensions as htm (for now)
-        htm.initializeInput(data)
+        htm = self.htm
+        
+        htm.initializeInput(self.data)
         self.assertEqual(htm.width, 2)
         self.assertEqual(htm.length, 3)
         cols = 0
@@ -31,6 +33,23 @@ class TestHTM(unittest.TestCase):
             self.assertEqual(len(col.synapses), config.getint('init', 'synapses_per_segment'))
             
         self.assertEqual(cols, 6)
+        
+    def testKthNeighbor(self):
+        'kth_neighbor in small networks'
+        htm = self.htm
+        htm.initializeInput(self.data)
+        
+        sameNeighbor = None
+        for col in htm.columns:
+            neighbor = col.kth_neighbor(7) #ask for a lower neighbor than exists
+            if sameNeighbor is not None:
+                self.assertEqual(sameNeighbor, neighbor)
+            else:
+                sameNeighbor = neighbor
+                
+    def testReceptiveField(self):
+        #TODO
+        self.htm.average_receptive_field_size()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testInit']

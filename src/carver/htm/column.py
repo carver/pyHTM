@@ -121,4 +121,12 @@ class Column(object):
         
         Numenta docs: Given the list of columns, return the kth highest overlap value
         '''
-        return sorted(self.neighbors, key=lambda col: col.overlap)[k-1]
+        allNeighbors = sorted(self.neighbors, key=lambda col: col.overlap)
+        index = min(k-1,len(allNeighbors)-1)
+        return allNeighbors[index]
+    
+    def __eq__(self, another):
+        if not hasattr(another, 'htm') or not hasattr(another, 'x') or \
+            not hasattr(another, 'y') or not hasattr(another, 'boost'):
+            return False
+        return self.htm == another.htm and self.x == another.x and self.y == another.y
