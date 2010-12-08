@@ -35,7 +35,7 @@ class Synapse(object):
         Is the input firing?
         @param acrossSynapse: only return True if the synapse is connected 
         '''
-        return self.input.wasActive and (self.connected() or not acrossSynapse)
+        return self.input.wasActive and (self.connected or not acrossSynapse)
     
     def isInputLearning(self):
         if not hasattr(input, 'learning'):

@@ -5,12 +5,11 @@ Created on Dec 7, 2010
 
 Numenta docs are (c) Numenta
 '''
-from carver.htm.column import Column
+from carver.htm import column
+from carver.htm import synapse
 from carver.htm.config import config
-from carver.htm.segment import Segment
-from carver.htm.input import InputCell
-from carver.htm.synapse import SYNAPSES_PER_SEGMENT, Synapse, CONNECTED_CUTOFF,\
-    PERMANENCE_INCREMENT
+from carver.htm import segment
+from carver.htm import input
 import random
 from math import exp, sqrt
 
@@ -38,7 +37,7 @@ class HTM(object):
         for x in xrange(width):
             columnsInX = []
             for y in xrange(length):
-                columnsInX.append(Column(self, x, y, self.cellsPerColumn))
+                columnsInX.append(column.Column(self, x, y, self.cellsPerColumn))
             self._column_grid.append(columnsInX)
         
         self.width = width
@@ -61,7 +60,7 @@ class HTM(object):
         
     def __wireColumnsToInput(self, data, inputWidth, inputLength):
         longerSide = max(inputWidth, inputLength)
-        cellProxies = [[InputCell(x, y, data) for y in xrange(inputLength)] for x in xrange(inputWidth)]
+        cellProxies = [[input.InputCell(x, y, data) for y in xrange(inputLength)] for x in xrange(inputWidth)]
         
         def randx():
             return random.randint(0,inputWidth-1)
@@ -71,14 +70,15 @@ class HTM(object):
         #give starting permanence value near the threshold
         #bias permanence up toward column center as a gaussian distribution
         for col in self.columns:
-            for i in xrange(SYNAPSES_PER_SEGMENT):
+            for i in xrange(synapse.SYNAPSES_PER_SEGMENT):
                 inputx = randx()
                 inputy = randy()
                 cellProxy = cellProxies[inputx][inputy]
-                rand_permanence = random.gauss(CONNECTED_CUTOFF, PERMANENCE_INCREMENT*2)
+                rand_permanence = random.gauss(synapse.CONNECTED_CUTOFF, 
+                    synapse.PERMANENCE_INCREMENT*2)
                 distance = col.distance_to(inputx, inputy)
                 locality_bias = (INPUT_BIAS_PEAK/0.4)*exp((distance/(longerSide*INPUT_BIAS_STD_DEV))**2/-2)
-                syn = Synapse(cellProxy, permanence=rand_permanence*locality_bias)
+                syn = synapse.Synapse(cellProxy, permanence=rand_permanence*locality_bias)
                 col.segment.add_synapse(syn)
     
     def neighbors(self, column):

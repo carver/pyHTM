@@ -39,11 +39,11 @@ def pool_temporal(htm, learning=True):
     if learning:
         _temporal_phase3(htm, updateSegments)
     
-def _spatial_overlap(htm, inputData):
+def _spatial_overlap(htm):
     'Overlap, p 35'
     
     for col in htm.columns:
-        col.overlap = len(col.synapses_firing(inputData))
+        col.overlap = len(col.synapses_firing())
             
         #The paper has conflicting information in the following lines.
         #The text implies boost before cutoff, the code: cutoff then boost. I 
