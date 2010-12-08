@@ -67,6 +67,10 @@ class Column(object):
             return self.dutyCycleMin / self.dutyCycleActive
         
     @property
+    def synapses(self):
+        return self.segment.synapses
+        
+    @property
     def synapsesConnected(self):
         return self.segment.synapsesConnected
     

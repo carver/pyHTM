@@ -64,9 +64,9 @@ class HTM(object):
         cellProxies = [[InputCell(x, y, data) for y in xrange(inputLength)] for x in xrange(inputWidth)]
         
         def randx():
-            return random.randint(0,inputWidth)
+            return random.randint(0,inputWidth-1)
         def randy():
-            return random.randint(0,inputLength)
+            return random.randint(0,inputLength-1)
         
         #give starting permanence value near the threshold
         #bias permanence up toward column center as a gaussian distribution

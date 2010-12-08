@@ -24,10 +24,13 @@ class TestHTM(unittest.TestCase):
         data = [[1,0,1],[0,0,1]] #2d format, same dimensions as htm (for now)
         htm.initializeInput(data)
         self.assertEqual(htm.width, 2)
-        self.assertEqual(htm.length, 2)
-        self.assertEqual(len(htm.columns), 6)
+        self.assertEqual(htm.length, 3)
+        cols = 0
         for col in htm.columns:
+            cols += 1
             self.assertEqual(len(col.synapses), config.getint('init', 'synapses_per_segment'))
+            
+        self.assertEqual(cols, 6)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testInit']
