@@ -8,13 +8,12 @@ Reproduced from "HTM Cortical Learning Algorithms" v0.1.1 at:
 http://www.numenta.com/htm-overview/education.php 
 '''
 
-from carver.htm import kth_score, neighbor_duty_cycle_max, average_receptive_field_size,\
-    create_dendrite_segment
 from carver.htm.config import config
 from carver.htm.synapse import CONNECTED_CUTOFF
+from carver.htm.column import Column
 
 #one column out of n should fire:
-desiredLocalActivity = config.get('constants','desiredLocalActivity')
+desiredLocalActivity = config.getint('constants','desiredLocalActivity')
 
 def pool_spatial(htm):
     '''
@@ -59,7 +58,7 @@ def _spatial_inhibition(htm):
     'Inhibition, p 35'
     activeColumns = []
     for col in htm.columns:
-        minLocalActivity = kth_score(htm.neighbors(col), desiredLocalActivity)
+        minLocalActivity = col.kth_score(desiredLocalActivity)
         
         if col.overlap > 0 and col.overlap >= minLocalActivity:
             activeColumns.append(col)
@@ -79,7 +78,7 @@ def _spatial_learning(htm, activeColumns):
                 s.permanence_decrement()
             
     for col in htm.columns:
-        col.dutyCycleMin = 0.01 * neighbor_duty_cycle_max(col)
+        col.dutyCycleMin = 0.01 * col.neighbor_duty_cycle_max()
         col.dutyCycleActive = col.get_duty_cycle_active()
         col.boost = col.next_boost()
         
@@ -87,7 +86,7 @@ def _spatial_learning(htm, activeColumns):
         if col.dutyCycleOverlap < col.dutyCycleMin:
             col.increase_permanences(0.1 * CONNECTED_CUTOFF)
         
-    return average_receptive_field_size(htm.columns)
+    return htm.average_receptive_field_size()
 
 def _temporal_phase1(htm, learning):
     'Phase 1, p40'

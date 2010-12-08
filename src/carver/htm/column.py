@@ -2,11 +2,15 @@
 Created on Nov 26, 2010
 
 @author: Jason
+
+Numenta docs are (c) Numenta
+
 '''
 from carver.htm.cell import Cell
 from carver.htm.synapse import Synapse
 from carver.htm.config import config
 from carver.htm.segment import Segment
+import math
 
 #using an exponential average, so AS*old+(1-AS*current) => new
 AVG_SCALE = 0.995
@@ -24,7 +28,7 @@ class Column(object):
         
         '''
         self.htm = htm
-        self.cells = [Cell(htm) for i in xrange(cellsPerColumn)] #@UnusedVariable
+        self.cells = [Cell() for i in xrange(cellsPerColumn)] #@UnusedVariable
         self.overlap = 0
         #synapses on input/proximal dendrites, forced equal for whole column, in equivalent of single segment
         self.segment = Segment(distal=False)
@@ -92,3 +96,25 @@ class Column(object):
                     fewestSynapses = len(cell.synapses)
             
         return bestCell
+    
+    def distance_to(self, x, y):
+        return math.sqrt((x-self.x)**2 + (y-self.y)**2)
+    
+    def __str__(self):
+        #TODO much more
+        return "pos %s,%s; active? %s" % (self.x, self.y, self.active)
+    
+    def neighbor_duty_cycle_max(self):
+        '''
+        (Adapted from maxDutyCycle)
+        Numenta docs: Returns the maximum active duty cycle of the columns in the 
+        neighborhood  
+        '''
+        return max((c.dutyCycleActive for c in self.neighbors))
+    
+    def kth_neighbor(self, k):
+        '''
+        
+        Numenta docs: Given the list of columns, return the kth highest overlap value
+        '''
+        return sorted(self.neighbors, key=lambda col: col.overlap)[k-1]

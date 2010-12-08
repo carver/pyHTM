@@ -6,7 +6,7 @@ Created on Nov 27, 2010
 from ConfigParser import ConfigParser
 import os
 
-PROJECT_BASE_PATH = __file__.rpartition('src/')[0]
+PROJECT_BASE_PATH = os.path.abspath(__file__.rpartition('src')[0])
 SITE_PROPERTIES_PATH = os.path.join(PROJECT_BASE_PATH, 'src', 'htm.properties')
 DEFAULT_PROPERTIES_PATH = os.path.join(PROJECT_BASE_PATH, 'src', 'htm.default.properties')
 

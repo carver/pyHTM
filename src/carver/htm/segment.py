@@ -25,9 +25,12 @@ class Segment(object):
         self.synapses = []
         self.distal = distal
         
-    def add_synapse(self, input):
+    def create_synapse(self, input):
         'input is either the data coming into the layer or the previous cell in network'
         self.synapses.append(Synapse(input))
+        
+    def add_synapse(self, syn):
+        self.synapses.append(syn)
         
     def synapses_firing(self, acrossSynapse=True):
         '''

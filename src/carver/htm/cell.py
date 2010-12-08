@@ -8,7 +8,7 @@ from carver.htm.segment import Segment
 from carver.htm.synapse import MIN_THRESHOLD, SYNAPSES_PER_SEGMENT
 from random import random
 
-SEGMENTS_PER_CELL = config.get('init','segments_per_cell')
+SEGMENTS_PER_CELL = config.getint('init','segments_per_cell')
 
 class Cell(object):
     '''
@@ -57,16 +57,32 @@ class Cell(object):
     def create_segment(self, htm):
         seg = Segment()
         
-        #randomly choose input cells
-        wasLearningCells = filter(lambda c: c.wasLearning, htm.cells)
-        inputCells = random.sample(wasLearningCells, SYNAPSES_PER_SEGMENT)
+        #randomly choose input cells, from 
+        synapseLen = self.__createSynapses(seg, htm.cells, SYNAPSES_PER_SEGMENT,
+            lambda c: c.wasLearning)
         
-        for i in xrange(SYNAPSES_PER_SEGMENT):
-            seg.add_synapse(inputCells[i])
+        if synapseLen < SYNAPSES_PER_SEGMENT:
+            addSynapseLen = SYNAPSES_PER_SEGMENT - synapseLen
+            activeSynapseLen = self.__createSynapses(seg, htm.cells, addSynapseLen,
+                lambda c: c.wasActive)
+        
+            if activeSynapseLen < SYNAPSES_PER_SEGMENT:
+                addSynapseLen -= activeSynapseLen
+                self.__createSynapses(seg, htm.cells, addSynapseLen, None)
             
         self.segments.append(seg)
         
         return seg
+    
+    def __createSynapses(self, segment, cells, maxSynapses, filterFunc):
+        matchingCells = filter(filterFunc, cells)
+        sampleSize = min(len(matchingCells), maxSynapses)
+        synapseFrom = random.sample(matchingCells, sampleSize)
+        
+        for cell in synapseFrom:
+            segment.create_synapse(cell)
+             
+        return len(synapseFrom)
     
     def __hash__(self):
         return 1 #TODO make hashable
@@ -98,3 +114,9 @@ class Cell(object):
                 bestSegment = seg
                 
         return bestSegment
+    
+    def __str__(self):
+        #TODO show synapses
+        return "(active,predicting,learning) = now(%s,%s,%s) last(%s,%s,%s) synapses:TODO" % (
+            self.active, self.predicting, self.learning, self.wasActive, 
+            self.predicted, self.wasLearning)
