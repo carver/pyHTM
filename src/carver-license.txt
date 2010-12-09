@@ -1,13 +1,15 @@
-All copyright not owned by Numenta is governed by the LGPL license.
+All text in the repository not owned by Numenta is Copyright Jason Carver 2010, 
+governed by the LGPL license.
 
+Jason's thoughts on LGPL boundries:
 In practical terms, what constitutes linking to a library is a tricky concept in
 a dynamic language.  My interpretation is that if you alter the implementation
 or API of the HTM library, then it falls under the must-distribute-source 
 clause.  If you have an application that uses this HTM library to accomplish 
 some specific goal (say, vision recognition), then you are not obligated to 
-open-source your app.  (Numenta has their own thoughts on Patents and IPin your 
-app, you will have to talk to them about that)  For any cases I missed, see the
-LGPL below:
+open-source your entire app, only the HTM library part.  
+Numenta has their own thoughts on Patents and IP in your app, you will have to 
+consult them about that)  In all other cases, the LGPL below applies:
 
                    GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007

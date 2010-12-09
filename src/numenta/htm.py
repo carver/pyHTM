@@ -48,7 +48,7 @@ def _spatial_overlap(htm):
         #The paper has conflicting information in the following lines.
         #The text implies boost before cutoff, the code: cutoff then boost. I 
         #chose boost first because I think the boost should help a column 
-        #overcome the cutoff. This choice is based solely on intuition. 
+        #overcome the cutoff.
         col.overlap *= col.boost
         
         if col.overlap < col.MIN_OVERLAP:
@@ -58,7 +58,8 @@ def _spatial_inhibition(htm):
     'Inhibition, p 35'
     activeColumns = []
     for col in htm.columns:
-        minLocalActivity = col.kth_neighbor(desiredLocalActivity)
+        kthNeighbor = col.kth_neighbor(desiredLocalActivity)
+        minLocalActivity = kthNeighbor.overlap
         
         if col.overlap > 0 and col.overlap >= minLocalActivity:
             activeColumns.append(col)
