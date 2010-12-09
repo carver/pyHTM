@@ -106,7 +106,7 @@ class Column(object):
     
     def __str__(self):
         #TODO much more
-        return "pos %s,%s; active? %s" % (self.x, self.y, self.active)
+        return "pos %s,%s; active? %s\n\t%s" % (self.x, self.y, self.active, self.segment)
     
     def neighbor_duty_cycle_max(self):
         '''

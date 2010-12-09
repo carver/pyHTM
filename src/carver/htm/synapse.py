@@ -51,4 +51,4 @@ class Synapse(object):
         self.permanence = max(self.permanence - decrement_by, 0.0)
         
     def __str__(self):
-        return '{p:%s,c:%s,i:%s}' % (self.permanence, self.connected, self.is_firing(False))
+        return '{p:%.3f,c:%s,i:%s}' % (self.permanence, self.connected, self.is_firing(False))
