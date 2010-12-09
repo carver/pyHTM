@@ -27,7 +27,7 @@ class Segment(object):
         
     def create_synapse(self, input):
         'input is either the data coming into the layer or the previous cell in network'
-        self.synapses.append(Synapse(input))
+        self.add_synapse(Synapse(input))
         
     def add_synapse(self, syn):
         self.synapses.append(syn)
@@ -57,13 +57,13 @@ class Segment(object):
         Timing note: a synapse is considered active if the cell it came from
         was active in the previous step
         '''
-        return len(self.synapses_firing()) > SEGMENT_ACTIVATION_THRESHOLD
+        return len(self.synapses_firing()) >= SEGMENT_ACTIVATION_THRESHOLD
     
     @property
     def activeFromLearningCells(self):
         learningSynapses = filter(lambda synapse: synapse.is_firing() and synapse.isInputLearning, 
             self.synapses)
-        return len(learningSynapses) > SEGMENT_ACTIVATION_THRESHOLD
+        return len(learningSynapses) >= SEGMENT_ACTIVATION_THRESHOLD
     
     def __str__(self):
         return 'segment active?%s [%s]' % (self.active, ';'.join(map(str,self.synapses)))
