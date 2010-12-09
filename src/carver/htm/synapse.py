@@ -30,12 +30,13 @@ class Synapse(object):
     def connected(self):
         return self.permanence >= CONNECTED_CUTOFF
     
-    def is_firing(self, acrossSynapse=True):
+    def is_firing(self, requireConnection=True):
         '''
         Is the input firing?
-        @param acrossSynapse: only return True if the synapse is connected 
+        @param requireConnection: only return True if the synapse is connected 
+            if False: return True even if synapse is not connected
         '''
-        return self.input.wasActive and (self.connected or not acrossSynapse)
+        return self.input.wasActive and (self.connected or not requireConnection)
     
     def isInputLearning(self):
         if not hasattr(input, 'learning'):
@@ -48,3 +49,6 @@ class Synapse(object):
         
     def permanence_decrement(self, decrement_by=PERMANENCE_DECREMENT):
         self.permanence = max(self.permanence - decrement_by, 0.0)
+        
+    def __str__(self):
+        return '{p:%s,c:%s,i:%s}' % (self.permanence, self.connected, self.is_firing(False))

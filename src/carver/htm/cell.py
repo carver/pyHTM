@@ -108,7 +108,7 @@ class Cell(object):
         bestSegment = None
         bestSegmentSynapseCount = MIN_THRESHOLD
         for seg in self.segments:
-            synapseCount = len(seg.synapses_firing(acrossSynapse=False))
+            synapseCount = len(seg.synapses_firing(requireConnection=False))
             if synapseCount > bestSegmentSynapseCount:
                 bestSegmentSynapseCount = synapseCount
                 bestSegment = seg
@@ -117,6 +117,12 @@ class Cell(object):
     
     def __str__(self):
         #TODO show synapses
-        return "(active,predicting,learning) = now(%s,%s,%s) last(%s,%s,%s) synapses:TODO" % (
+        base = "cell: (active,predicting,learning) = now(%s,%s,%s) last(%s,%s,%s)" % (
             self.active, self.predicting, self.learning, self.wasActive, 
             self.predicted, self.wasLearning)
+        
+        segText = [base]
+        for seg in self.segments:
+            segText.append(str(seg))
+            
+        return '\n\t'.join(segText)

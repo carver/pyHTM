@@ -109,5 +109,5 @@ class HTM(object):
         radii = []
         for c in self.columns:
             for syn in c.synapsesConnected:
-                radii.append(((c.x-syn.input.x)**2, (c.y-syn.input.y)**2)**0.5)
+                radii.append(((c.x-syn.input.x)**2 + (c.y-syn.input.y)**2)**0.5)
         return sum(radii)/len(radii)

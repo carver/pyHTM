@@ -123,9 +123,11 @@ def _temporal_phase1(htm, learning):
             seg = cell.create_segment(htm)
             updateSegments[cell] = [seg]
             
+    return updateSegments
+            
 def _temporal_phase2(htm, updateSegments, learning):
     'Phase 2, p40'
-    for cell in htm.allCells:
+    for cell in htm.cells:
         if learning and cell not in updateSegments:
             updateSegments[cell] = []
             

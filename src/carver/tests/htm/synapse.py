@@ -25,22 +25,22 @@ class TestSynapse(unittest.TestCase):
         input.wasActive = True
         s = Synapse(input, permanence=CONNECTED_CUTOFF + 0.1)
         self.assert_(s.is_firing())
-        self.assert_(s.is_firing(acrossSynapse=True))
-        self.assert_(s.is_firing(acrossSynapse=False))
+        self.assert_(s.is_firing(requireConnection=True))
+        self.assert_(s.is_firing(requireConnection=False))
         
         input = Mock()
         input.wasActive = True
         s = Synapse(input, permanence=CONNECTED_CUTOFF - 0.1)
         self.assertFalse(s.is_firing())
-        self.assertFalse(s.is_firing(acrossSynapse=True))
-        self.assert_(s.is_firing(acrossSynapse=False))
+        self.assertFalse(s.is_firing(requireConnection=True))
+        self.assert_(s.is_firing(requireConnection=False))
         
         input = Mock()
         input.wasActive = False
         s = Synapse(input, permanence=CONNECTED_CUTOFF + 0.1)
         self.assertFalse(s.is_firing())
-        self.assertFalse(s.is_firing(acrossSynapse=True))
-        self.assertFalse(s.is_firing(acrossSynapse=False))
+        self.assertFalse(s.is_firing(requireConnection=True))
+        self.assertFalse(s.is_firing(requireConnection=False))
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testInit']

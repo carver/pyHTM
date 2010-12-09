@@ -32,12 +32,12 @@ class Segment(object):
     def add_synapse(self, syn):
         self.synapses.append(syn)
         
-    def synapses_firing(self, acrossSynapse=True):
+    def synapses_firing(self, requireConnection=True):
         '''
-        @param acrossSynapse: only include synapse if the synapse is connected
+        @param requireConnection: only include synapse if the synapse is connected
         @return an iterable of firing synapses
         '''
-        return filter(lambda synapse: synapse.is_firing(acrossSynapse=acrossSynapse), 
+        return filter(lambda synapse: synapse.is_firing(requireConnection=requireConnection), 
             self.synapses)
     
     def increase_permanences(self, byAmount):
@@ -64,3 +64,6 @@ class Segment(object):
         learningSynapses = filter(lambda synapse: synapse.is_firing() and synapse.isInputLearning, 
             self.synapses)
         return len(learningSynapses) > SEGMENT_ACTIVATION_THRESHOLD
+    
+    def __str__(self):
+        return 'segment active?%s [%s]' % (self.active, ';'.join(self.synapses))

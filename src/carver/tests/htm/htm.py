@@ -20,11 +20,13 @@ class TestHTM(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def _initialize(self):
+        self.htm.initializeInput(self.data)
 
     def testInit(self):
         htm = self.htm
         
-        htm.initializeInput(self.data)
+        self._initialize()
         self.assertEqual(htm.width, 2)
         self.assertEqual(htm.length, 3)
         cols = 0
@@ -37,7 +39,7 @@ class TestHTM(unittest.TestCase):
     def testKthNeighbor(self):
         'kth_neighbor in small networks'
         htm = self.htm
-        htm.initializeInput(self.data)
+        self._initialize()
         
         sameNeighbor = None
         for col in htm.columns:
@@ -48,8 +50,12 @@ class TestHTM(unittest.TestCase):
                 sameNeighbor = neighbor
                 
     def testReceptiveField(self):
-        #TODO
+        self._initialize()
         self.htm.average_receptive_field_size()
+        
+    def testDataFlow(self):
+        self._initialize()
+        
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testInit']
