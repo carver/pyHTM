@@ -6,6 +6,7 @@ Created on Dec 7, 2010
 import unittest
 from carver.htm import HTM
 from carver.htm.config import config
+from numenta.htm import pool_spatial, pool_temporal
 
 
 class TestHTM(unittest.TestCase):
@@ -53,8 +54,31 @@ class TestHTM(unittest.TestCase):
         self._initialize()
         self.htm.average_receptive_field_size()
         
-    def testDataFlow(self):
-        self._initialize()
+    def testDataLoop(self):
+        #TODO pass
+        htm = self.htm
+        data = [[1,0,1],[0,0,1]] #2d format, same dimensions as htm (for now)
+    
+        htm.initializeInput(data)
+        
+        for t in xrange(20):
+            for cell in htm.cells:
+                cell.clockTick()
+                
+            pool_spatial(htm)
+            pool_temporal(htm, learning=True)
+            
+            #flip all data
+            for x in xrange(htm.width):
+                for y in xrange(htm.length):
+                    data[x][y] = not data[x][y]
+        
+        #show output (this is way too verbose to leave in for long, 
+        #    but useful during early testing)
+        for cell in htm.cells:
+            print cell
+        for col in htm.columns:
+            print col
         
 
 if __name__ == "__main__":

@@ -67,3 +67,28 @@ class Segment(object):
     
     def __str__(self):
         return 'segment active?%s [%s]' % (self.active, ';'.join(map(str,self.synapses)))
+    
+    def adapt_up(self):
+        '''HTM v0.1.1 page 46 adaptSegments:
+        All active synapses get their permanence counts incremented. All other 
+        synapses get their permanence counts decremented. 
+        '''
+        for syn in self.synapses:
+            if syn.is_firing(requireConnection=False):
+                syn.permanence_increment()
+            else:
+                syn.permanence_decrement()
+        
+        #TODO add new synapses if too few exist? Not sure if this is the right
+        #    place.  Reading: "After this step, any synapses in segmentUpdate 
+        #    that do yet exist get added with a permanence count of initialPerm." 
+        #    If so, be sure to add to adapt_down, too.
+
+                
+    def adapt_down(self):
+        '''HTM v0.1.1 page 46 adaptSegments:
+        Synapses on the active list get their permanence counts decremented. 
+        '''
+        for syn in self.synapses:
+            if syn.is_firing(requireConnection=False):
+                syn.permanence_decrement()

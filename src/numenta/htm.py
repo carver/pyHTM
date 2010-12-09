@@ -119,7 +119,7 @@ def _temporal_phase1(htm, learning):
                 
         #Learning Phase 1, p41
         if learning and not learningCellChosen:
-            cell = col.bestCell
+            cell = col.bestCell()
             cell.learning = True
             seg = cell.create_segment(htm)
             updateSegments[cell] = [seg]

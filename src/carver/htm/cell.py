@@ -6,7 +6,7 @@ Created on Nov 27, 2010
 from carver.htm.config import config
 from carver.htm.segment import Segment
 from carver.htm.synapse import MIN_THRESHOLD, SYNAPSES_PER_SEGMENT
-from random import random
+import random
 
 SEGMENTS_PER_CELL = config.getint('init','segments_per_cell')
 
@@ -94,7 +94,6 @@ class Cell(object):
             if seg.active:
                 return seg
             
-    @property
     def bestMatchingSegment(self):
         '''
         For this cell, find the segment with the largest 

@@ -13,6 +13,7 @@ class TestColumn(unittest.TestCase):
 
 
     def setUp(self):
+        self.col = Column(HTM(), 0, 0, 4)
         pass
 
 
@@ -21,7 +22,7 @@ class TestColumn(unittest.TestCase):
 
 
     def testSynapsesFiring(self):
-        col = Column(HTM(), 0, 0, 4)
+        col = self.col
         
         firing = Mock({'is_firing':True})
         off = Mock({'is_firing':False})
@@ -33,6 +34,10 @@ class TestColumn(unittest.TestCase):
         self.assertEqual(4, len(col.synapses_firing()))
         col.segment.add_synapse(firing)
         self.assertEqual(5, len(col.synapses_firing()))
+        
+    def testBestCell(self):
+        #trivial case (no synapses explicitly set on any cells):
+        self.assertNotEqual(None, self.col.bestCell())
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testInit']

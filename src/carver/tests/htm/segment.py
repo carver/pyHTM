@@ -34,6 +34,13 @@ class TestSegment(unittest.TestCase):
         self.assertFalse(seg.active)
         seg.add_synapse(firing)
         self.assert_(seg.active)
+        
+    def testAdaptation(self):
+        seg = Segment()
+        
+        #for now, just don't crash
+        seg.adapt_up()
+        seg.adapt_down()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testInit']

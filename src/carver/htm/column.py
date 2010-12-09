@@ -78,26 +78,26 @@ class Column(object):
     def neighbors(self):
         return self.htm.neighbors(self)
     
-    @property
     def bestCell(self):
+        '#see htm doc 0.1.1 pg 45: getBestMatchingCell'
         bestCell = None
         bestCellFiringSynapseCount = 0
         
         #find cell with best best matching segment
         for cell in self.cells:
-            seg = cell.bestMatchingSegment
-            if len(seg.synapses_firing()) > bestCellFiringSynapseCount:
+            seg = cell.bestMatchingSegment()
+            if seg and len(seg.synapses_firing()) > bestCellFiringSynapseCount:
                 bestCellFiringSynapseCount = len(seg.synapses_firing())
                 bestCell = cell
             
-        #if none, pick the one with the fewest synapses
+        #if none, pick the one with the fewest segments
         if bestCell is None:
-            fewestSynapses = len(self.cells[0].synapses)
+            fewestSegments = len(self.cells[0].segments)
             bestCell = self.cells[0]
             for cell in self.cells[1:]:
-                if len(cell.synapses) < fewestSynapses:
+                if len(cell.segments) < fewestSegments:
                     bestCell = cell
-                    fewestSynapses = len(cell.synapses)
+                    fewestSegments = len(cell.segments)
             
         return bestCell
     
