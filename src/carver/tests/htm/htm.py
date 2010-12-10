@@ -22,7 +22,7 @@ class TestHTM(unittest.TestCase):
         pass
 
     def _initialize(self):
-        self.htm.initializeInput(self.data)
+        self.htm.initialize_input(self.data)
 
     def testInit(self):
         htm = self.htm
@@ -54,31 +54,49 @@ class TestHTM(unittest.TestCase):
         self._initialize()
         self.htm.average_receptive_field_size()
         
-    def testDataLoop(self):
-        htm = self.htm
-        data = [[1,0,1],[0,0,1]] #2d format, same dimensions as htm (for now)
-    
-        htm.initializeInput(data)
-        
-        for t in xrange(20):
-            for cell in htm.cells:
-                cell.clockTick()
-                
-            pool_spatial(htm)
-            pool_temporal(htm, learning=True)
-            
+    def flipDataGenerator(self, htm):
+        def flipData(data):
             #flip all data
             for x in xrange(htm.width):
                 for y in xrange(htm.length):
                     data[x][y] = not data[x][y]
+        return flipData
         
+    def testDataLoop(self):
+        htm = self.htm
+        data = [[1,0,1],[0,0,1]] #2d format, same dimensions as htm (for now)
+    
+        htm.initialize_input(data)
+                    
+        htm.execute(data, self.flipDataGenerator(htm), ticks=20)
+
         #show output (this is way too verbose to leave in for long, 
         #    but useful during early testing)
-        for cell in htm.cells:
-            print cell
-        for col in htm.columns:
-            print col
+#        for cell in htm.cells:
+#            print cell
+#        for col in htm.columns:
+#            print col
+
+    def testStability(self):
+        'test that repeated patterns get recognized by the same columns after stabilizing'
+        htm = self.htm
         
+        #2d format, same dimensions as htm (for now)
+        data = [[1,0,1,0,1,0,1,0,1,0],[0,0,0,0,1,0,0,0,0,1]]
+        
+        htm.initialize_input(data)
+                    
+        flipDat = self.flipDataGenerator(htm)
+        htm.execute(data, flipDat, ticks=50)
+        active = htm.columns_active()
+        htm.execute(data, flipDat, ticks=2)
+        self.assertEqual(active, htm.columns_active())
+        htm.execute(data, flipDat, ticks=2)
+        self.assertEqual(active, htm.columns_active())
+        
+        #show that stability is non-trivial because it changes at the next time step
+        htm.execute(data, flipDat)
+        self.assertNotEqual(active, htm.columns_active())
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testInit']

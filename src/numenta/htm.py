@@ -95,7 +95,7 @@ def _temporal_phase1(htm, learning):
     #hash from cell to a list of segments
     updateSegments = {}
     
-    for col in htm.columnsActive:
+    for col in htm.columns_active():
         buPredicted = False
         learningCellChosen = False
         for i in xrange(htm.cellsPerColumn):

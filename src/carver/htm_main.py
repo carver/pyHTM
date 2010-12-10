@@ -15,7 +15,7 @@ if __name__ == '__main__':
     #TODO enable real data input
     data = [[1,0,1],[0,0,1]] #2d format, same dimensions as htm (for now)
     
-    htm.initializeInput(data)
+    htm.initialize_input(data)
     
     #TODO run data over time
     for t in xrange(1):

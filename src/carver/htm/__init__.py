@@ -26,9 +26,8 @@ class HTM(object):
         for x in xrange(self.width):
             for y in xrange(self.length):
                 yield self._column_grid[x][y]
-                
-    @property
-    def columnsActive(self):
+             
+    def columns_active(self):
         return filter(lambda c: c.active, self.columns)
     
     def __createColumns(self, width, length):
@@ -43,8 +42,9 @@ class HTM(object):
         self.width = width
         self.length = length
         
-    def initializeInput(self, data):
-        '''assume 2d for now
+    def initialize_input(self, data):
+        '''
+        assume 2d for now
         Inspired by HTM doc 0.1.1, pg 34
         '''
         
@@ -57,6 +57,27 @@ class HTM(object):
         #add synapses on sequential/distal dendrites from each cell to cell,
         #which is not based on any known HTM docs
         #Actually, just let the first synapses grow on their own in temporal 1
+        
+    def execute(self, data, dataModifyFunc, ticks=1, learning=True):
+        '''
+        execute htm pooling across time
+        @param data: a mutable array of data for a single time slice
+        @param dataModifyFunc: called to mutate data at each time step
+        @param ticks: how many iterations of execution to run
+        @param learning: whether the htm executes in learning mode
+        '''
+        for t in xrange(ticks):
+            self.__executeOne(learning)
+            dataModifyFunc(data)
+        
+    def __executeOne(self, learning):
+        from numenta.htm import pool_spatial, pool_temporal
+        
+        for cell in self.cells:
+                cell.clockTick()
+                
+        pool_spatial(self)
+        pool_temporal(self, learning=True)
         
     def __wireColumnsToInput(self, data, inputWidth, inputLength):
         longerSide = max(inputWidth, inputLength)

@@ -22,7 +22,7 @@ class TestColumn(unittest.TestCase):
 
     def testCreateSegment(self):
         h = HTM()
-        h.initializeInput([[1,1]])
+        h.initialize_input([[1,1]])
         cell = Cell()
         startingSegments = config.getint('init','segments_per_cell')
         self.assertEqual(startingSegments, len(cell.segments))
