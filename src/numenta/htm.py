@@ -98,8 +98,7 @@ def _temporal_phase1(htm, learning):
     for col in htm.columns_active():
         buPredicted = False
         learningCellChosen = False
-        for i in xrange(htm.cellsPerColumn):
-            cell = col.cells[i]
+        for cell in col.cells:
             if cell.predicted:
                 seg = cell.activeSegment() #TODO always return segment or protect against None
                 
