@@ -98,6 +98,23 @@ class TestHTM(unittest.TestCase):
         htm.execute(data, flipDat)
         self.assertNotEqual(active, htm.columns_active())
 
+    def testPatternTraining(self):
+        'test that within columns, particular cells dominate when they recognize learned temporal patterns'
+        htm = self.htm
+        
+        #2d format, same dimensions as htm (for now)
+        data = [[1,0,1,0,1,0,1,0,1,0],[0,0,0,0,1,0,0,0,0,1]]
+        
+        htm.initialize_input(data)
+                    
+        flipDat = self.flipDataGenerator(htm)
+        htm.execute(data, flipDat, ticks=100)
+        activeCols = htm.columns_active()
+        
+        #all columns should have learned particular cell patterns by now
+        for col in activeCols:
+            self.assertNotEqual(len(col.cells), len(filter(lambda cell: cell.active, col.cells)))
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testInit']
     unittest.main()
