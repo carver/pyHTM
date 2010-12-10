@@ -109,6 +109,9 @@ class TestHTM(unittest.TestCase):
                     
         flipDat = self.flipDataGenerator(htm)
         htm.execute(data, flipDat, ticks=100)
+        
+        htm.execute(data, flipDat, ticks=1)
+        
         activeCols = htm.columns_active()
         
         #all columns should have learned particular cell patterns by now
