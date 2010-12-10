@@ -11,6 +11,7 @@ from carver.htm.config import config
 from carver.htm import segment
 from carver.htm import input
 import random
+import logging
 from math import exp, sqrt
 
 INPUT_BIAS_PEAK = config.getfloat('init','input_bias_peak')
@@ -50,6 +51,10 @@ class HTM(object):
         
         inputWidth = len(data)
         inputLength = len(data[0])
+        
+        if inputLength * inputWidth < 45:
+            logging.warning('Increase the size of your input to at least 45 pixels.\nDue to the segment activation threshold for prediction, too small a number of inputs prevents the HTM from learning temporal patterns')
+        
         self.__createColumns(inputWidth, inputLength)
         
         self.__wireColumnsToInput(data, inputWidth, inputLength)

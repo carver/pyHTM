@@ -103,7 +103,14 @@ class TestHTM(unittest.TestCase):
         htm = self.htm
         
         #2d format, same dimensions as htm (for now)
-        data = [[1,0,1,0,1,0,1,0,1,0],[0,0,0,0,1,0,0,0,0,1]]
+        data = [
+            [1,0,1,0,1,0,1,0,1,0],
+            [0,0,0,0,1,0,1,0,1,1],
+            [0,0,1,0,1,0,0,0,0,1],
+            [0,1,0,0,1,1,0,1,0,1],
+            [1,0,1,0,1,0,1,0,0,1],
+            [0,0,0,1,1,0,0,0,1,1],
+            ]
         
         htm.initialize_input(data)
                     
