@@ -87,7 +87,6 @@ class Cell(object):
     def __hash__(self):
         return 1 #TODO make hashable
     
-    @property
     def activeSegment(self):
         'prefer distal'
         for seg in self.segments:

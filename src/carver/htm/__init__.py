@@ -76,12 +76,17 @@ class HTM(object):
                 syn = synapse.Synapse(cellProxy, permanence=rand_permanence*locality_bias)
                 col.segment.add_synapse(syn)
     
+    def __radiusUp(self, val, edge):
+        return min(edge, max(val+1, int(round(val + self.inhibitionRadius))))
+    def __radiusDown(self, val, edge):
+        return max(0, min(val-1, int(round(val - self.inhibitionRadius))))
+    
     def neighbors(self, column):
         #boundries
-        startx = max(0, column.x - self.inhibitionRadius)
-        endx = min(self.width, column.x + self.inhibitionRadius)
-        starty = max(0, column.y - self.inhibitionRadius)
-        endy = min(self.length, column.y + self.inhibitionRadius)
+        startx = self.__radiusDown(column.x, 0)
+        starty = self.__radiusDown(column.y, 0)
+        endx = self.__radiusUp(column.x, self.width)
+        endy = self.__radiusUp(column.y, self.length)
         
         for x in xrange(startx, endx):
             for y in xrange(starty, endy):

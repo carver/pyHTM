@@ -101,10 +101,10 @@ def _temporal_phase1(htm, learning):
         for i in xrange(htm.cellsPerColumn):
             cell = col.cells[i]
             if cell.predicted:
-                seg = cell.activeSegment
+                seg = cell.activeSegment() #TODO always return segment or protect against None
                 
                 #distal dendrite segments = sequence memory
-                if seg.distal:
+                if seg and seg.distal:
                     buPredicted = True
                     cell.active = True
                     
@@ -142,7 +142,7 @@ def _temporal_phase2(htm, updateSegments, learning):
         #for each cell, grab the best segment. right now, this does not prevent 
         #duplication of learning on the best segment
         if learning and cell.predicting:
-            bestSeg = cell.bestMatchingSegment
+            bestSeg = cell.bestMatchingSegment()
             updateSegments[cell].append(bestSeg)
     
     return updateSegments

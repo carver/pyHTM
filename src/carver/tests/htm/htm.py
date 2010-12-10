@@ -55,7 +55,6 @@ class TestHTM(unittest.TestCase):
         self.htm.average_receptive_field_size()
         
     def testDataLoop(self):
-        #TODO pass
         htm = self.htm
         data = [[1,0,1],[0,0,1]] #2d format, same dimensions as htm (for now)
     
