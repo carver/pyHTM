@@ -14,19 +14,20 @@ The project is very young, and still remains unproven in terms of correctness.  
 Goals
 -
 * Near Term
- * Build diagnostic UI tools to show network state
- * Confirm correctness of algorithm (as defined by Numenta)
+  * Build diagnostic UI tools to show network state
+  * Confirm correctness of algorithm (as defined by Numenta)
 * Medium Term
- * Build showcase of effectiveness on both trivial and real-world data
- * Serialize network state to disk to pause & continue
+  * Build showcase of effectiveness on both trivial and real-world data
+  * Serialize network state to disk to pause & continue
 * Long Term
- * Build UI to configure and run HTM networks
- * Optimize for speed, never sacrificing code readability.
+  * Build UI to configure and run HTM networks
+  * Optimize for speed, never sacrificing code readability.
  
 
 Status
 -
 Dec 10: The most basic correctness tests are passing!
+
  * the same columns light up on the same input data
  * particular cells within the column become active after learning temporal patterns
  
