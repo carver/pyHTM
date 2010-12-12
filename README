@@ -5,7 +5,7 @@ pyHTM - Hierarchical Temporal Memory in Python
 
 Summary
 -
-This project is an implementation of the Cortical Learning Algorithms version of HTM, as described in v0.1.1 of the [writeup](http://www.numenta.com/htm-overview/education.php).  Ultimately, pyHTM will demonstrate learning and categorization of various sensory inputs, and display the results.
+This project is an unofficial implementation of the Cortical Learning Algorithms version of HTM, as described in v0.1.1 of the [writeup](http://www.numenta.com/htm-overview/education.php).  Ultimately, pyHTM will demonstrate learning and categorization of various sensory inputs, and display the results.
 
 This implementation will favor code readability over optimization when those options are mutually exclusive.  If you want to understand what's going on, just dig into carver/htm_main.py and trace the code (using the Numenta paper as a reference).
 
