@@ -1,0 +1,45 @@
+Numenta License for Non-Commercial Use
+
+Copyright (c) 2010 Jason Carver
+
+All rights reserved.
+
+This software is based upon or includes certain works and algorithms related to hierarchical temporal memory 
+(“HTM”) technology published by Numenta Inc. Numenta holds patent rights related to HTM and the algorithms
+used in this software. Numenta has agreed not to assert its patent rights against development or use of independent
+HTM systems, as long as such development or use is for research purposes only, and not for any commercial or
+production use. Any commercial or production use of HTM technology that infringes on Numenta’s patents will
+require a commercial license from Numenta.
+
+Based on the foregoing, this software is licensed under the terms below, for research purposes only and not for any
+commercial or production use. For purposes of this license, "commercial or production use" includes training an
+HTM network with the intent of later deploying the trained network or application for commercial or production
+purposes, and using or permitting others to use the output from HTM technology for commercial or production
+purposes.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
+limitations in the disclaimer below) provided that the following conditions are met:
+
+* Redistributions of source code, including any modifications or derivative works, must retain the above
+copyright notice and the following disclaimer, and be subject to the terms and conditions of this license.
+
+* Redistributions in binary form, including any modifications or derivative works, must reproduce the
+above copyright Notice and the following disclaimer in the documentation and/or other materials provided with
+the distribution, and be subject to the terms and conditions of this license.
+
+* Neither the name of Numenta, Inc., Jason Carver, nor the names of other contributors may be used to
+endorse or promote products derived from this software without specific prior written permission.
+
+NO EXPRESS OR IMPLIED LICENSES TO ANY PATENT RIGHTS ARE
+GRANTED BY THIS LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT
+HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGE.
