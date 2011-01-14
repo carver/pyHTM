@@ -1,7 +1,7 @@
 pyHTM - Hierarchical Temporal Memory in Python
 =
 
-*Note: [Numenta](http://www.numenta.com/) reserves certain patent rights, despite this project being licensed LGPL. See Intellectual Property for details.*
+*Note: [Numenta](http://www.numenta.com/) reserves certain patent rights. See Intellectual Property for details.*
 
 Summary
 -
@@ -33,6 +33,8 @@ Dec 10: The most basic correctness tests are passing!
  
 Intellectual Property
 -
-Numenta [encourages non-commercial experimentation](http://www.numenta.com/about-numenta/licensing.php): "Numenta promises that it will not assert its current patent rights against development or use of independent HTM systems, as long as such development or use is for research purposes only, and not for any commercial or production use."  You should contact them if you want a commercial license.
+Numenta [encourages non-commercial experimentation](http://www.numenta.com/about-numenta/licensing.php): "Numenta promises that it will not assert its current patent rights against development or use of independent HTM systems, as long as such development or use is for research purposes only, and not for any commercial or production use."
 
-A section of this code, found in the numenta package, is a direct translation from the pseudocode in their writeup.  Despite pretty significant changes in the translation to python, I am assuming the Numenta copyright still holds (I only have a basic understanding of copyright law).  The rest of the implementation is in the carver.htm package, and is licensed LGPL; see carver-license.txt for my interpretation of what constitutes library usage.
+In fact the license I'm using on this project is also non-commercial, so if you want a commercial license, you'll have to work it out with both Numenta and myself.
+
+A section of this code, found in the numenta package, is a direct translation from the pseudocode in their writeup.  Despite pretty significant changes in the translation to python, I am assuming the Numenta copyright still holds (I only have a basic understanding of copyright law).  The rest of the implementation is in the carver.htm package, and is licensed under the Numenta Non-commercial License; see license.txt for details.
