@@ -28,7 +28,7 @@ Status
 -
 Dec 10: The most basic correctness tests are passing!
 
- * the same columns light up on the same input data
+ * after short training, repeated incidents of the same data "light up" the same columns
  * particular cells within the column become active after learning temporal patterns
  
 Intellectual Property
