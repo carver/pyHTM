@@ -26,6 +26,8 @@ Goals
 
 Status
 -
+Jan 19: Basic HTM network history readout implemented in htm_main (shows in console)
+
 Dec 10: The most basic correctness tests are passing!
 
  * after short training, repeated incidents of the same data "light up" the same columns
