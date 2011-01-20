@@ -63,16 +63,21 @@ class HTM(object):
         #which is not based on any known HTM docs
         #Actually, just let the first synapses grow on their own in temporal 1
         
-    def execute(self, data, dataModifyFunc, ticks=1, learning=True):
+    def execute(self, data, dataModifyFunc, ticks=1, learning=True,
+        postTick=None):
         '''
         execute htm pooling across time
         @param data: a mutable array of data for a single time slice
         @param dataModifyFunc: called to mutate data at each time step
         @param ticks: how many iterations of execution to run
         @param learning: whether the htm executes in learning mode
+        @param postTick: call this function after every iteration,
+            with the htm as an argument
         '''
         for t in xrange(ticks):
             self.__executeOne(learning)
+            if postTick:
+                postTick(self)
             dataModifyFunc(data)
         
     def __executeOne(self, learning):
