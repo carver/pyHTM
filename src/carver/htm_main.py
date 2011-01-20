@@ -5,6 +5,7 @@ Created on Nov 26, 2010
 
 '''
 from carver.htm import HTM
+from carver.htm.ui.excite_history import ExciteHistory
 
 if __name__ == '__main__':
     htm = HTM()
@@ -27,12 +28,19 @@ if __name__ == '__main__':
         for x in xrange(len(data)):
             data[x]=map(lambda bit: not bit, data[x])
     
-    htm.execute(data, dataUpdate, ticks=30)
+    #track htm's data history with
+    history = ExciteHistory()
+    
+    htm.execute(data, dataUpdate, ticks=90, postTick=history.update)
     
     #TODO show output more effectively
     for cell in htm.cells:
         print cell
     for col in htm.columns:
         print col
+        
+    print "\n\n*************** Graph History **************\n\n"
+        
+    print history.text_graph()
     
     #TODO save htm state to disk
