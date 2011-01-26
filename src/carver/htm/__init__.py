@@ -18,9 +18,12 @@ INPUT_BIAS_PEAK = config.getfloat('init','input_bias_peak')
 INPUT_BIAS_STD_DEV = config.getfloat('init','input_bias_std_dev')
 
 class HTM(object):
-    def __init__(self):
+    def __init__(self, cellsPerColumn=None):
         self.inhibitionRadius = config.getint('init', 'inhibitionRadius')
-        self.cellsPerColumn = config.getint('init','cells_per_column')
+        if cellsPerColumn:
+            self.cellsPerColumn = cellsPerColumn
+        else:
+            self.cellsPerColumn = config.getint('init','cells_per_column')
         
     @property
     def columns(self):
