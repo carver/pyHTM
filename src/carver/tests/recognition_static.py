@@ -130,11 +130,11 @@ class TestRecognition(unittest.TestCase):
             for y, match_percent in enumerate(labelrow):
                 if x == y:
                     self.assertGreaterEqual(match_percent, 0.9, 
-                        msg='htm did not correctly recognize the %s (%.1f%%)' % (
+                        msg='htm did not correctly recognize the %s (%.1f%% match)' % (
                             testnames[x], match_percent*100))
                 else:
                     self.assertLessEqual(match_percent, 0.8,
-                        msg='htm thought it recognized a %s, when it saw a %s (%.1f%%)' %(
+                        msg='htm thought it recognized a %s, when it saw a %s (%.1f%% match)' %(
                             testnames[x], testnames[y], match_percent*100))
         
 if __name__ == "__main__":
