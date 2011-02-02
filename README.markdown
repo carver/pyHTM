@@ -15,7 +15,7 @@ Goals
 -
 * Near Term
   * Build diagnostic UI tools to show network state
-  * Confirm correctness of algorithm (as defined by Numenta)
+  * Confirm correctness of algorithm (as defined by Numenta) <-- currently
 * Medium Term
   * Build showcase of effectiveness on both trivial and real-world data
   * Serialize network state to disk to pause & continue
@@ -26,6 +26,9 @@ Goals
 
 Status
 -
+Feb 1: Added test for recognition of 4 static images (does not yet pass all tests)
+@see src/carver/tests/recognition_static.py
+
 Jan 19: Basic HTM network history readout implemented in htm_main (shows in console)
 
 Dec 10: The most basic correctness tests are passing!
