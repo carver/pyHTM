@@ -8,38 +8,49 @@ class ExciteHistory(object):
     '''
     Track the history of an HTM, in order to graph a summary.
     '''
+    INACTIVE = 0
+    PREDICTING = 1
+    ACTIVE = 2
 
-
-    def __init__(self):
+    def __init__(self, temporal=True):
         '''
         '''
         self.data = []
-        self.numCells = 0
+        self.dataLen = 0
+        self.temporal = temporal
         
     def update(self, htm):
         timeSlice = []
-        for cell in htm.cells:
-            state = 0
-            if cell.active:
-                state = 2
-            elif cell.predicting:
-                state = 1
-            timeSlice.append(state)
+        
+        if self.temporal:
+            for cell in htm.cells:
+                state = self.INACTIVE
+                if cell.active:
+                    state = self.ACTIVE
+                elif cell.predicting:
+                    state = self.PREDICTING
+                timeSlice.append(state)
+        else:
+            for col in htm.columns:
+                state = self.INACTIVE
+                if col.active:
+                    state = self.ACTIVE
+                timeSlice.append(state)
             
-        self.numCells = max(self.numCells, len(timeSlice))
+        self.dataLen = max(self.dataLen, len(timeSlice))
             
         self.data.append(timeSlice)
         
     def _state_to_char(self, state):
-        if state == 0: return ' '
-        elif state == 1: return '.'
-        elif state == 2: return '0'
+        if state == self.INACTIVE: return ' '
+        elif state == self.PREDICTING: return '.'
+        elif state == self.ACTIVE: return '0'
         else: return '?'
         
     def text_graph(self):
         #TODO handle variable cells well 
         rows = []
-        for i in xrange(self.numCells):
+        for i in xrange(self.dataLen):
             rows.append([])
             
         for slice in self.data:
