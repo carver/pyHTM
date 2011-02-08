@@ -3,6 +3,7 @@ Created on Jan 31, 2011
 
 @author: Jason
 '''
+from carver.htm.io import updateMatrix
 
 class FlashCards(object):
     '''
@@ -35,9 +36,7 @@ class FlashCards(object):
             newmat = self.matrices[self.currentIdx]
             
             #copy matrix in
-            for x in xrange(len(newmat)):
-                for y in xrange(len(newmat[x])):
-                    matrix[x][y] = newmat[x][y]
+            updateMatrix(matrix, newmat)
                     
     def reset(self):
         self.pause_remaining = 0

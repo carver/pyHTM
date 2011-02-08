@@ -13,6 +13,7 @@ from carver.htm import input
 import random
 import logging
 from math import exp, sqrt
+from carver.htm.io import updateMatrix
 
 INPUT_BIAS_PEAK = config.getfloat('init','input_bias_peak')
 INPUT_BIAS_STD_DEV = config.getfloat('init','input_bias_std_dev')
@@ -52,6 +53,8 @@ class HTM(object):
         Inspired by HTM doc 0.1.1, pg 34
         '''
         
+        self.__data = data
+        
         inputWidth = len(data)
         inputLength = len(data[0])
         
@@ -66,7 +69,7 @@ class HTM(object):
         #which is not based on any known HTM docs
         #Actually, just let the first synapses grow on their own in temporal 1
         
-    def execute(self, data, dataModifyFunc, ticks=1, learning=True,
+    def execute(self, data, dataModifyFunc=None, ticks=1, learning=True,
         postTick=None):
         '''
         execute htm pooling across time
@@ -77,11 +80,14 @@ class HTM(object):
         @param postTick: call this function after every iteration,
             with the htm as an argument
         '''
-        for t in xrange(ticks):
+        updateMatrix(self.__data, data)
+        
+        for _t in xrange(ticks):
             self.__executeOne(learning)
             if postTick:
                 postTick(self)
-            dataModifyFunc(data)
+            if dataModifyFunc:
+                dataModifyFunc(self.__data)
         
     def __executeOne(self, learning):
         from numenta.htm import pool_spatial, pool_temporal
