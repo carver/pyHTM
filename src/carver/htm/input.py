@@ -24,3 +24,7 @@ class InputCell(object):
     @property
     def wasActive(self):
         return self.inputData[self.x][self.y]
+    
+    @property
+    def location(self):
+        return [self.x, self.y]
