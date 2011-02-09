@@ -52,8 +52,8 @@ class HTM(object):
         assume 2d for now
         Inspired by HTM doc 0.1.1, pg 34
         '''
-        
-        self.__data = data
+        #TODO copy 2-dimensional list
+        self._data = data
         
         inputWidth = len(data)
         inputLength = len(data[0])
@@ -80,14 +80,14 @@ class HTM(object):
         @param postTick: call this function after every iteration,
             with the htm as an argument
         '''
-        updateMatrix(self.__data, data)
+        updateMatrix(self._data, data)
         
         for _t in xrange(ticks):
             self.__executeOne(learning)
             if postTick:
                 postTick(self)
             if dataModifyFunc:
-                dataModifyFunc(self.__data)
+                dataModifyFunc(self._data)
         
     def __executeOne(self, learning):
         from numenta.htm import pool_spatial, pool_temporal
