@@ -20,7 +20,7 @@ class ColumnInfoTest(unittest.TestCase):
         cards = FlashCards(1, mat1, mat2, mat3)
         htm = HTM()
         htm.initialize_input(mat1)
-        htm.execute(mat1, dataModifyFunc=cards.updateMatrix, ticks=3*30, learning=True)
+        htm.execute(mat1, dataModifyFunc=cards.updateMatrix, ticks=3*10, learning=True)
         
         self.htm = htm
 
@@ -32,6 +32,7 @@ class ColumnInfoTest(unittest.TestCase):
         htm = self.htm
         first = htm.columns.next()
         colInfo = ColumnInfo(first)
+        print colInfo.legend()
         print colInfo.synapseTargets()
         
         htm.execute(self.matrices[0], learning=False)

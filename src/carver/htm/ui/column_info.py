@@ -16,6 +16,9 @@ class ColumnInfo(object):
         '''
         self.col = column
         
+    def legend(self):
+        return '''Incoming Spike: 'O' (Connected); 'X' (Unconnected)\nNo Activity: '_' (Connection); '.' (Unconnected) '''
+        
     def synapseStates(self):
         states = []
         for syn in self.col.synapses:
