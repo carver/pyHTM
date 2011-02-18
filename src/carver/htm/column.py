@@ -21,7 +21,7 @@ class Column(object):
     Represents a column in an HTM network
     '''
     
-    MIN_OVERLAP = 5 #TODO choose a reasonable number
+    MIN_OVERLAP = 5 #TODO: choose a reasonable number
 
     def __init__(self, htm, x, y, cellsPerColumn):
         '''
@@ -105,7 +105,7 @@ class Column(object):
         return math.sqrt((x-self.x)**2 + (y-self.y)**2)
     
     def __str__(self):
-        #TODO much more
+        #TODO: much more
         return "pos %s,%s; active? %s\n\t%s" % (self.x, self.y, self.active, self.segment)
     
     def neighbor_duty_cycle_max(self):

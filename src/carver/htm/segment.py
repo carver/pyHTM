@@ -79,7 +79,7 @@ class Segment(object):
             else:
                 syn.permanence_decrement()
         
-        #TODO add new synapses if too few exist? Not sure if this is the right
+        #TODO: add new synapses if too few exist? Not sure if this is the right
         #    place.  Reading: "After this step, any synapses in segmentUpdate 
         #    that do yet exist get added with a permanence count of initialPerm." 
         #    If so, be sure to add to adapt_down, too.

@@ -52,7 +52,7 @@ class HTM(object):
         assume 2d for now
         Inspired by HTM doc 0.1.1, pg 34
         '''
-        #TODO copy 2-dimensional list
+        #TODO: copy 2-dimensional list
         self._data = data
         
         inputWidth = len(data)

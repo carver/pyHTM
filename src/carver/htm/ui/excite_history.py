@@ -48,7 +48,7 @@ class ExciteHistory(object):
         else: return '?'
         
     def text_graph(self):
-        #TODO handle variable cells well 
+        #TODO: handle variable cells well 
         rows = []
         for i in xrange(self.dataLen):
             rows.append([])

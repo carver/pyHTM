@@ -85,7 +85,7 @@ class Cell(object):
         return len(synapseFrom)
     
     def __hash__(self):
-        return 1 #TODO make hashable
+        return 1 #TODO: make hashable
     
     def activeSegment(self):
         'prefer distal'
@@ -114,7 +114,7 @@ class Cell(object):
         return bestSegment
     
     def __str__(self):
-        #TODO show synapses
+        #TODO: show synapses
         base = "cell: (active,predicting,learning) = now(%s,%s,%s) last(%s,%s,%s)" % (
             self.active, self.predicting, self.learning, self.wasActive, 
             self.predicted, self.wasLearning)

@@ -6,8 +6,8 @@ Created on Nov 27, 2010
 from carver.htm.config import config
 
 CONNECTED_CUTOFF = 0.2 #this is the permanence cutoff to be considered connected
-PERMANENCE_INCREMENT = 0.04 #TODO choose a reasonable number
-PERMANENCE_DECREMENT = 0.04 #TODO choose a reasonable number
+PERMANENCE_INCREMENT = 0.04 #TODO: choose a reasonable number
+PERMANENCE_DECREMENT = 0.04 #TODO: choose a reasonable number
 MIN_THRESHOLD = config.getint('constants','min_synapses_per_segment_threshold')
 SYNAPSES_PER_SEGMENT = config.getint('init', 'synapses_per_segment')
 

@@ -33,7 +33,7 @@ if __name__ == '__main__':
     
     htm.execute(data, dataUpdate, ticks=90, postTick=history.update)
     
-    #TODO show output more effectively
+    #TODO: show output more effectively
     for cell in htm.cells:
         print cell
     for col in htm.columns:
@@ -43,4 +43,4 @@ if __name__ == '__main__':
         
     print history.text_graph()
     
-    #TODO save htm state to disk
+    #TODO: save htm state to disk
