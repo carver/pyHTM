@@ -6,6 +6,17 @@ Created on Nov 26, 2010
 '''
 from carver.htm import HTM
 from carver.htm.ui.excite_history import ExciteHistory
+from copy import deepcopy
+        
+def flipDataGenerator(htm):
+    while True:
+        #flip all data
+        dataFlipped = deepcopy(htm._data)
+        for x in xrange(len(dataFlipped)):
+            for y in xrange(len(dataFlipped[0])):
+                dataFlipped[x][y] = not dataFlipped[x][y]
+                
+        yield dataFlipped
 
 if __name__ == '__main__':
     htm = HTM()
@@ -22,16 +33,10 @@ if __name__ == '__main__':
     
     htm.initialize_input(data)
     
-    #this method should update the data matrix in place
-    def dataUpdate(data):
-        'flip all bits in data matrix'
-        for x in xrange(len(data)):
-            data[x]=map(lambda bit: not bit, data[x])
-    
     #track htm's data history with
     history = ExciteHistory()
     
-    htm.execute(data, dataUpdate, ticks=90, postTick=history.update)
+    htm.execute(data, flipDataGenerator(htm), ticks=90, postTick=history.update)
     
     #TODO: show output more effectively
     for cell in htm.cells:

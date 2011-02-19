@@ -13,7 +13,7 @@ from carver.htm import input
 import random
 import logging
 from math import exp, sqrt
-from carver.htm.io import updateMatrix
+from copy import deepcopy
 
 INPUT_BIAS_PEAK = config.getfloat('init','input_bias_peak')
 INPUT_BIAS_STD_DEV = config.getfloat('init','input_bias_std_dev')
@@ -52,8 +52,7 @@ class HTM(object):
         assume 2d for now
         Inspired by HTM doc 0.1.1, pg 34
         '''
-        #TODO: copy 2-dimensional list
-        self._data = data
+        self._data = deepcopy(data)
         
         inputWidth = len(data)
         inputLength = len(data[0])
@@ -63,31 +62,39 @@ class HTM(object):
         
         self.__createColumns(inputWidth, inputLength)
         
-        self.__wireColumnsToInput(data, inputWidth, inputLength)
+        self.__wireColumnsToInput(self._data, inputWidth, inputLength)
                 
         #add synapses on sequential/distal dendrites from each cell to cell,
         #which is not based on any known HTM docs
         #Actually, just let the first synapses grow on their own in temporal 1
         
-    def execute(self, data, dataModifyFunc=None, ticks=1, learning=True,
+    def execute(self, data=None, dataGenerator=None, ticks=1, learning=True,
         postTick=None):
         '''
         execute htm pooling across time
-        @param data: a mutable array of data for a single time slice
-        @param dataModifyFunc: called to mutate data at each time step
+        @param data: starting input data, if None the dataGenerator will be used
+        @param dataGenerator: generates next input data at each time step, 
+            iter(dataGenerator) must produce a valid iterator
         @param ticks: how many iterations of execution to run
         @param learning: whether the htm executes in learning mode
         @param postTick: call this function after every iteration,
             with the htm as an argument
         '''
-        updateMatrix(self._data, data)
+        
+        if dataGenerator:
+            dataStream = iter(dataGenerator)
+        
+        if data:
+            self.updateMatrix(data)
+        else:
+            self.updateMatrix(dataStream.next())
         
         for _t in xrange(ticks):
             self.__executeOne(learning)
             if postTick:
                 postTick(self)
-            if dataModifyFunc:
-                dataModifyFunc(self._data)
+            if dataGenerator:
+                self.updateMatrix(dataStream.next())
         
     def __executeOne(self, learning):
         from numenta.htm import pool_spatial, pool_temporal
@@ -98,6 +105,11 @@ class HTM(object):
         pool_spatial(self)
         pool_temporal(self, learning=True)
         
+    def updateMatrix(self, newData):
+        for x in xrange(len(newData)):
+            for y in xrange(len(newData[x])):
+                self._data[x][y] = newData[x][y]
+        
     def __wireColumnsToInput(self, data, inputWidth, inputLength):
         longerSide = max(inputWidth, inputLength)
         cellProxies = [[input.InputCell(x, y, data) for y in xrange(inputLength)] for x in xrange(inputWidth)]
@@ -105,7 +117,7 @@ class HTM(object):
         #give starting permanence value near the threshold
         #bias permanence up toward column center as a gaussian distribution
         for col in self.columns:
-            for i in xrange(synapse.SYNAPSES_PER_SEGMENT):
+            for _i in xrange(synapse.SYNAPSES_PER_SEGMENT):
                 inputx = random.randint(0,inputWidth-1)
                 inputy = random.randint(0,inputLength-1)
                 cellProxy = cellProxies[inputx][inputy]

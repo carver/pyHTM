@@ -3,13 +3,12 @@ Created on Jan 31, 2011
 
 @author: Jason
 '''
-from carver.htm.io import updateMatrix
 
 class FlashCards(object):
     '''
     This is a state machine that takes a series of 2x2 matrices
     on initialization and a number of steps to display each matrix.
-    After the pause (number of steps of updateMatrix calls), 
+    After the pause (number of steps of dataGenerator calls), 
     FlashCards will update the matrix argument with the next 
     matrix in the series from the initializer.  At the end of
     the list of matrices, FlashCards rotates back to the beginning.
@@ -25,18 +24,17 @@ class FlashCards(object):
         self.matrices = args
         self.currentIdx = -1
         
-    def updateMatrix(self, matrix):
-        if self.pause_remaining:
-            self.pause_remaining -= 1
-        else:
-            #move to new matrix
-            self.currentIdx += 1
-            self.currentIdx %= len(self.matrices)
-            self.pause_remaining = self.pause - 1
-            newmat = self.matrices[self.currentIdx]
-            
-            #copy matrix in
-            updateMatrix(matrix, newmat)
+    def dataGenerator(self):
+        while True:
+            if self.pause_remaining:
+                self.pause_remaining -= 1
+            else:
+                #move to new matrix
+                self.currentIdx += 1
+                self.currentIdx %= len(self.matrices)
+                self.pause_remaining = self.pause - 1
+                
+            yield self.matrices[self.currentIdx]
                     
     def reset(self):
         self.pause_remaining = 0
