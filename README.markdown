@@ -26,6 +26,12 @@ Goals
 
 Status
 -
+Feb 18: Pass all tests again!
+
+ * A mutable data bug was causing failure for recognition of 4 static images, fixed
+ * Updated the htm.execute API to use a data generator instead of a function that mutates a data structure (what was I thinking?)
+ * Next up: temporal recognition tests
+
 Feb 1: Added test for recognition of 4 static images (does not yet pass all tests)
 @see src/carver/tests/recognition_static.py
 
