@@ -35,32 +35,44 @@ class HTM(object):
     def columns_active(self):
         return filter(lambda c: c.active, self.columns)
     
-    def __createColumns(self, width, length):
+    def __createColumns(self, inputWidth, inputLength, inputCompression):
+        '''
+        @param inputWidth: width of input cells
+        @param inputLength: length of input cells
+        @param inputCompression: ratio of input cells to columns
+        '''
         #columns is a 2d list of lists, where x and y should line up with indices
         self._column_grid = []
+        
+        width = int(inputWidth / inputCompression)
+        length = int(inputLength / inputCompression)
+        
         for x in xrange(width):
             columnsInX = []
             for y in xrange(length):
                 columnsInX.append(column.Column(self, x, y, self.cellsPerColumn))
             self._column_grid.append(columnsInX)
         
-        self.width = width
-        self.length = length
+        return (width, length)
         
-    def initialize_input(self, data):
+    def initialize_input(self, data, compressionFactor=1.0):
         '''
         assume 2d for now
         Inspired by HTM doc 0.1.1, pg 34
+        @param data: an example matrix of data
+        @param compressionFactor: the ratio of input pixels to columns
         '''
         self._data = deepcopy(data)
+        self.inputCompression = compressionFactor
         
         inputWidth = len(data)
         inputLength = len(data[0])
         
-        if inputLength * inputWidth < 45:
-            logging.warning('Increase the size of your input to at least 45 pixels.\nDue to the segment activation threshold for prediction, too small a number of inputs prevents the HTM from learning temporal patterns')
+        (self.width, self.length) = self.__createColumns(
+            inputWidth, inputLength, self.inputCompression)
         
-        self.__createColumns(inputWidth, inputLength)
+        if self.width * self.length < 45:
+            logging.warning('Increase the size of your input to at least 45 pixels or reduce your compression.\nDue to the segment activation threshold for prediction, too small a number of inputs prevents the HTM from learning temporal patterns')
         
         self.__wireColumnsToInput(self._data, inputWidth, inputLength)
                 

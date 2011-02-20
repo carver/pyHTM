@@ -87,7 +87,7 @@ class TestRecognition(unittest.TestCase):
         print_htm_state = False
         
         h = HTM(cellsPerColumn=1)
-        h.initialize_input(self.sea_anemone)
+        h.initialize_input(self.sea_anemone, compressionFactor=3.5)
         
         #learn the different static data images
         swap = FlashCards(90, self.sea_anemone, self.seastar, self.sea_cucumber, self.hermitcrab)

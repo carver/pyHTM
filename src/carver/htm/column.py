@@ -102,7 +102,12 @@ class Column(object):
         return bestCell
     
     def distance_to(self, x, y):
-        return math.sqrt((x-self.x)**2 + (y-self.y)**2)
+        #map column's x,y values to input space:
+        inputx = self.htm.inputCompression * self.x
+        inputy = self.htm.inputCompression * self.y
+        
+        #assume 2d distances for now
+        return math.sqrt((x-inputx)**2 + (y-inputy)**2)
     
     def __str__(self):
         #TODO: much more
