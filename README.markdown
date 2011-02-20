@@ -26,6 +26,11 @@ Goals
 
 Status
 -
+Feb 20: can have fewer columns than input pixels
+ * Added new test to recognition_static
+ * Input compression works at 3.5x; this is not a limit, just as high as I tested today
+ * Specifically, a 14x14 grid of pixels, with a 4x4 network of columns, can recognize 4 distinct images 
+
 Feb 18: Pass all tests again!
 
  * A mutable data bug was causing failure for recognition of 4 static images, fixed
