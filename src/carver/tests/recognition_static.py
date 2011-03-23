@@ -91,12 +91,12 @@ class TestRecognition(unittest.TestCase):
         
         #learn the different static data images
         swap = FlashCards(90, self.sea_anemone, self.seastar, self.sea_cucumber, self.hermitcrab)
-        h.execute(self.sea_anemone, swap.dataGenerator(), ticks=90*4*3)
+        h.execute(swap.dataGenerator(), ticks=90*4*3-1)
         
         #run the htm network through and save the state in a history object
         swap = FlashCards(10, self.sea_anemone, self.seastar, self.sea_cucumber, self.hermitcrab)
         history = ExciteHistory(temporal=False)
-        h.execute(self.sea_anemone, swap.dataGenerator(), ticks=10*4, learning=False, postTick=history.update)
+        h.execute(swap.dataGenerator(), ticks=10*4-1, learning=False, postTick=history.update)
         
         #label the different static data images
         recognize = ObjectRecognize()
@@ -113,7 +113,7 @@ class TestRecognition(unittest.TestCase):
         #test recognition of the different static data images
         swap.reset()
         history = ExciteHistory(temporal=False)
-        h.execute(self.sea_anemone, swap.dataGenerator(), ticks=10*4, learning=False, postTick=history.update)
+        h.execute(swap.dataGenerator(), ticks=10*4-1, learning=False, postTick=history.update)
 
         if print_htm_state:
             print "\n\n*************** Recognition Testing **************\n\n"

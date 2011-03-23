@@ -9,6 +9,10 @@ from carver.htm.ui.excite_history import ExciteHistory
 from copy import deepcopy
         
 def flipDataGenerator(htm):
+    
+    #start with non-flipped data
+    yield htm._data
+    
     while True:
         #flip all data
         dataFlipped = deepcopy(htm._data)

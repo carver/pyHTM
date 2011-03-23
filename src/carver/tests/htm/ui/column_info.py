@@ -35,13 +35,13 @@ class ColumnInfoTest(unittest.TestCase):
         print colInfo.legend()
         print colInfo.synapseTargets()
         
-        htm.execute(self.matrices[0], learning=False)
+        htm.executeOnce(self.matrices[0], learning=False)
         states1 = colInfo.synapseStates()
         
-        htm.execute(self.matrices[1], learning=False)
+        htm.executeOnce(self.matrices[1], learning=False)
         states2 = colInfo.synapseStates()
         
-        htm.execute(self.matrices[2], learning=False)
+        htm.executeOnce(self.matrices[2], learning=False)
         states3 = colInfo.synapseStates()
         
         print states1

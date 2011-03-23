@@ -61,7 +61,7 @@ class TestHTM(unittest.TestCase):
     
         htm.initialize_input(data)
                     
-        htm.execute(data, flipDataGenerator(htm), ticks=20)
+        htm.execute(flipDataGenerator(htm), ticks=20)
 
         #show output (this is way too verbose to leave in for long, 
         #    but useful during early testing)
@@ -80,15 +80,15 @@ class TestHTM(unittest.TestCase):
         htm.initialize_input(data)
                     
         flipDat = flipDataGenerator(htm)
-        htm.execute(data, flipDat, ticks=50)
+        htm.execute(flipDat, ticks=50)
         active = htm.columns_active()
-        htm.execute(data, flipDat, ticks=2)
+        htm.execute(flipDat, ticks=1)
         self.assertEqual(active, htm.columns_active())
-        htm.execute(data, flipDat, ticks=2)
+        htm.execute(flipDat, ticks=1)
         self.assertEqual(active, htm.columns_active())
         
         #show that stability is non-trivial because it changes at the next time step
-        htm.execute(data, flipDat)
+        htm.execute(flipDat, ticks=0)
         self.assertNotEqual(active, htm.columns_active())
 
     def testPatternTraining(self):
@@ -108,9 +108,7 @@ class TestHTM(unittest.TestCase):
         htm.initialize_input(data)
                     
         flipDat = flipDataGenerator(htm)
-        htm.execute(data, flipDat, ticks=100)
-        
-        htm.execute(data, flipDat, ticks=1)
+        htm.execute(flipDat, ticks=100)
         
         activeCols = htm.columns_active()
         

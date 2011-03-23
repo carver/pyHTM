@@ -21,6 +21,10 @@ class TranslateInput(object):
         self.shift = shift
         
     def dataGenerator(self):
+        
+        #start by returning the first data matrix
+        yield  self.current
+        
         while self.steps_remaining:
             
             self.current = self.doShift()

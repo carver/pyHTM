@@ -80,11 +80,19 @@ class HTM(object):
         #which is not based on any known HTM docs
         #Actually, just let the first synapses grow on their own in temporal 1
         
-    def execute(self, data=None, dataGenerator=None, ticks=1, learning=True,
+    def executeOnce(self, data, learning=True, postTick=None):
+        '''
+        @param data: current input data
+        '''
+        self.updateMatrix(data)
+        self.__executeOne(learning)
+        if postTick:
+            postTick(self)
+        
+    def execute(self, dataGenerator, ticks=None, learning=True,
         postTick=None):
         '''
         execute htm pooling across time
-        @param data: starting input data, if None the dataGenerator will be used
         @param dataGenerator: generates next input data at each time step, 
             iter(dataGenerator) must produce a valid iterator
         @param ticks: how many iterations of execution to run
@@ -93,20 +101,13 @@ class HTM(object):
             with the htm as an argument
         '''
         
-        if dataGenerator:
-            dataStream = iter(dataGenerator)
-        
-        if data:
-            self.updateMatrix(data)
-        else:
-            self.updateMatrix(dataStream.next())
-        
-        for _t in xrange(ticks):
-            self.__executeOne(learning)
-            if postTick:
-                postTick(self)
-            if dataGenerator:
-                self.updateMatrix(dataStream.next())
+        for data in iter(dataGenerator):
+            self.executeOnce(data, learning, postTick)
+                
+            if ticks is not None:
+                ticks -= 1
+                if ticks < 0:
+                    break
         
     def __executeOne(self, learning):
         from numenta.htm import pool_spatial, pool_temporal
