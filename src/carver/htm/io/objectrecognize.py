@@ -8,8 +8,12 @@ from carver.htm.ui.excite_history import ExciteHistory
 class ObjectRecognize(object):
     'assumes always equal matrix dimensions'
     
-    def __init__(self):
+    def __init__(self, temporal=False):
         self.dataSets = {}
+        if temporal:
+            self.relevantStates = (ExciteHistory.ACTIVE, ExciteHistory.PREDICTING)
+        else:
+            self.relevantStates = (ExciteHistory.ACTIVE, )
         
     def label(self, name, dataSet):
         'store this dataSet as the canonical example'
@@ -22,8 +26,8 @@ class ObjectRecognize(object):
         success_total = 0
         total = 0
         for x in xrange(len(canonical)):
-            if canonical[x] == ExciteHistory.ACTIVE:
-                if dataSet[x] == ExciteHistory.ACTIVE:
+            if canonical[x] in self.relevantStates:
+                if dataSet[x] in self.relevantStates:
                     success_total += 1
                 total += 1
                 
