@@ -9,7 +9,7 @@ class TranslateInput(object):
     Take an input matrix and shift it over time.
     '''    
     
-    def __init__(self, init, shift, steps):
+    def __init__(self, init, shift, steps=None):
         '''
         @param init: a data matrix to start with
         @param shift: a list with one element for each dimension of the init matrix,
@@ -17,7 +17,7 @@ class TranslateInput(object):
         @param steps: Number of steps to execute
         '''
         self.current = init
-        self.steps_remaining = steps
+        self.steps_remaining = steps if steps is not None else -1
         self.shift = shift
         
     def dataGenerator(self):
