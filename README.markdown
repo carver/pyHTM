@@ -26,6 +26,12 @@ Goals
 
 Status
 -
+Mar 23: New API for execution
+
+ * htm.execute() split into two distinct options: execute and executeOnce
+ * executeOnce takes a single data structure (2-d list of binary values) and runs a single cycle 
+ * execute takes an iterable and runs executeOnce until the iterable runs out (or until the number of cycles specified by 'ticks') 
+
 Feb 20: can have fewer columns than input pixels
 
  * Added new test to recognition_static
@@ -40,13 +46,6 @@ Feb 18: Pass all tests again!
 
 Feb 1: Added test for recognition of 4 static images (does not yet pass all tests)
 @see src/carver/tests/recognition_static.py
-
-Jan 19: Basic HTM network history readout implemented in htm_main (shows in console)
-
-Dec 10: The most basic correctness tests are passing!
-
- * after short training, repeated incidents of the same data "light up" the same columns
- * particular cells within the column become active after learning temporal patterns
  
 Intellectual Property
 -
