@@ -1,5 +1,4 @@
-pyHTM - Hierarchical Temporal Memory in Python
-================================================
+= pyHTM - Hierarchical Temporal Memory in Python
 
 _Note: http://www.numenta.com/[Numenta] reserves certain patent rights. See Intellectual Property for details._
 
@@ -68,4 +67,4 @@ A section of this code, found in the numenta package, is a direct translation fr
 
 == Markdown Rant
 
-Markdown reliably did everything in ways other than I expected it to, and did it with an ugly smile.  You'll notice a commit history on README.markdown with profanity.  I was pleasantly surprised to find the alternative: asciidoc.  It comes with a http://powerman.name/doc/asciidoc[cheat sheet] and a http://andrewk.webfactional.com/asciidoc.php[web preview], and looks beautiful.
+Markdown reliably did everything in ways other than I expected it to, and did it with an ugly smile.  You'll notice a commit history on README.markdown with profanity.  I was pleasantly surprised to find the alternative: asciidoc.  It comes with a http://powerman.name/doc/asciidoc[cheat sheet] and a http://andrewk.webfactional.com/asciidoc.php[web preview], and looks beautiful.  Well, it looked beautiful on the web preview, before Github applied their dull-gray css.
