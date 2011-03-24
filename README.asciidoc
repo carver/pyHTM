@@ -1,5 +1,4 @@
-pyHTM - Hierarchical Temporal Memory in Python
-===========
+== pyHTM - Hierarchical Temporal Memory in Python
 
 _Note: http://www.numenta.com/[Numenta] reserves certain patent rights. See Intellectual Property for details._
 
