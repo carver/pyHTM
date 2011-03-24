@@ -14,10 +14,10 @@ The project is very young, and still remains unproven in terms of correctness.  
 Quickstart
 -
 #preferably inside a virtual environment
-git clone git@github.com:carver/pyHTM.git pyHTM
+git clone git://github.com/carver/pyHTM.git
 cd pyHTM
 pip install -r requirements.txt
-#do cool stuff here 
+python src/htm_main.py 
 
 Goals
 -

@@ -42,14 +42,8 @@ if __name__ == '__main__':
     history = ExciteHistory()
     
     htm.execute(flipDataGenerator(htm), ticks=180, postTick=history.update)
-    
-    #TODO: show output more effectively
-    for cell in htm.cells:
-        print cell
-    for col in htm.columns:
-        print col
         
-    info = """*************** Graph History **************
+    print """*************** Graph History **************
 Y-Axis: All cells in the network, with the 4 cells per column grouped together
 X-Axis: Time
 Colors:
@@ -61,7 +55,6 @@ Notice that the network settles down very quickly at the left, but not completel
 
 At each time step, the input data is flipping bits. So you will see some cells alternating at every time step, some cells that are active either way, and some cells that are never active.  
 """
-    
     
     ## Show image with history grouped by cell
     columnStates = history.data
