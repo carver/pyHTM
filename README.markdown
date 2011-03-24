@@ -11,6 +11,14 @@ This implementation will favor code readability over optimization when those opt
 
 The project is very young, and still remains unproven in terms of correctness.  I welcome bug reports, forks and pull requests.
 
+Quickstart
+-
+#preferably inside a virtual environment
+git clone git@github.com:carver/pyHTM.git pyHTM
+cd pyHTM
+pip install -r requirements.txt
+#do cool stuff here 
+
 Goals
 -
 * Near Term
