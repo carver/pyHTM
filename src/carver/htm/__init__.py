@@ -25,6 +25,8 @@ class HTM(object):
             self.cellsPerColumn = cellsPerColumn
         else:
             self.cellsPerColumn = config.getint('init','cells_per_column')
+            
+        self._inputCells = [[]] #a 2-d map of cells monitoring input
         
     @property
     def columns(self):
@@ -80,6 +82,38 @@ class HTM(object):
         #which is not based on any known HTM docs
         #Actually, just let the first synapses grow on their own in temporal 1
         
+    def imagineNext(self):
+        'project down estimates for next time step to the input cells'
+        self._imagineStimulate(self.columns)
+        return self._imagineOverride(self._inputCells)
+    
+    @classmethod
+    def _imagineStimulate(cls, columns):
+        'testable step one of imagineNext'
+        for col in columns:
+            if col.active:
+                down_scale = len(col.synapsesConnected)
+                activityPerSynapse = float(1) / down_scale
+                
+                for synapse in col.synapsesConnected:
+                    synapse.input.stimulate(activityPerSynapse)
+                    
+    @classmethod
+    def _imagineOverride(cls, inputCells):
+        'testable step two of imagineNext'
+                
+        #flatten cell matrix
+        allInputs = []
+        for row in inputCells:
+            for cell in row:
+                allInputs.append(cell)
+                
+        maxStim = max(map(lambda inCell: inCell.stimulation, allInputs))
+        if maxStim:
+            for inCell in allInputs:
+                inCell.stimulation /= maxStim
+                inCell.override()
+        
     def executeOnce(self, data, learning=True, postTick=None):
         '''
         @param data: current input data
@@ -126,6 +160,8 @@ class HTM(object):
     def __wireColumnsToInput(self, data, inputWidth, inputLength):
         longerSide = max(inputWidth, inputLength)
         cellProxies = [[input.InputCell(x, y, data) for y in xrange(inputLength)] for x in xrange(inputWidth)]
+        
+        self._inputCells = cellProxies
         
         #give starting permanence value near the threshold
         #bias permanence up toward column center as a gaussian distribution

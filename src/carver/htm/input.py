@@ -21,10 +21,29 @@ class InputCell(object):
         self.inputData = inputData
         self.predicted = False
         
+        #currently used for downstream stimulation ("imagination")
+        self.stimulation = 0
+        self.overrideInput = False
+        self.stimulationPast = 0
+        
     @property
     def wasActive(self):
-        return self.inputData[self.x][self.y]
+        if self.overrideInput:
+            return self.stimulationPast
+        else:
+            return self.inputData[self.x][self.y]
     
     @property
     def location(self):
         return [self.x, self.y]
+    
+    def stimulate(self, amount):
+        self.stimulation += amount
+        
+    def override(self):
+        self.overrideInput = True
+        #TODO move magic number 0.8 into .properties file, or make htm understand float
+        self.stimulationPast = 1 if self.stimulation > 0.8 else 0
+        self.stimulation = 0
+        
+        

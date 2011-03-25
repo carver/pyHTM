@@ -6,9 +6,8 @@ Created on Dec 7, 2010
 import unittest
 from carver.htm import HTM
 from carver.htm.config import config
-from numenta.htm import pool_spatial, pool_temporal
-from copy import deepcopy
-from carver.htm_main import flipDataGenerator
+from htm_main import flipDataGenerator
+from mock import Mock
 
 class TestHTM(unittest.TestCase):
 
@@ -115,7 +114,37 @@ class TestHTM(unittest.TestCase):
         #all columns should have learned particular cell patterns by now
         for col in activeCols:
             self.assertNotEqual(len(col.cells), len(filter(lambda cell: cell.active, col.cells)))
-
+            
+    def testImagination(self):
+        input1 = Mock()
+        input1.stimulation=0
+        input2 = Mock()
+        input2.stimulation=0
+        synapse1 = Mock()
+        synapse1.input = input1
+        synapse2 = Mock()
+        synapse2.input = input2
+        col1 = Mock()
+        col1.synapsesConnected = [synapse1, synapse2]
+        col2 = Mock()
+        col2.synapsesConnected = [synapse2]
+        columns = [col1,col2]
+        inputCells = [[input1, input2]]
+        
+        self.htm._imagineStimulate(columns)
+        
+        input1.mockCheckCall(0, 'stimulate', 0.5)
+        input2.mockCheckCall(0, 'stimulate', 0.5)
+        input2.mockCheckCall(1, 'stimulate', 1)
+        
+        #TODO test input cells stimulation and override
+        input1.stimulation = 0.5
+        input2.stimulation = 1.5
+        
+        self.htm._imagineOverride(inputCells)
+        input1.mockCheckCall(1, 'override')
+        input2.mockCheckCall(2, 'override')
+        
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testInit']
     unittest.main()
