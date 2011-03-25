@@ -34,6 +34,21 @@ class TestInputCell(unittest.TestCase):
         self.assertFalse(cell.wasActive)
         cell = InputCell(1, 2, data)
         self.assert_(cell.wasActive)
+        
+    def testStimulate(self):
+        data = [[0,0,0], [0,0,0]]
+        cell = InputCell(0, 0, data)
+        cell.stimulate(.5)
+        self.assertEqual(0.5, cell.stimulation)
+        cell.stimulate(2.5)
+        cell.stimulation /= 2
+        self.assertEqual(1.5, cell.stimulation)
+        
+        self.assertFalse(cell.wasActive)
+        cell.override()
+        self.assertEqual(0, cell.stimulation)
+        self.assert_(cell.wasActive)
+        
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testInit']
