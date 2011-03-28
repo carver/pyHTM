@@ -137,7 +137,6 @@ class TestHTM(unittest.TestCase):
         input2.mockCheckCall(0, 'stimulate', 0.5)
         input2.mockCheckCall(1, 'stimulate', 1)
         
-        #TODO test input cells stimulation and override
         input1.stimulation = 0.5
         input2.stimulation = 1.5
         
