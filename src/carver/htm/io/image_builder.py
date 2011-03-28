@@ -34,3 +34,20 @@ class ImageBuilder(object):
         
     def show(self):
         return self.img.show()
+    
+class InputCellsDisplay(object):
+    def __init__(self, htm):
+        self.imageBuilder = ImageBuilder((htm.width, htm.length), self.cellActiveBW)
+        data = [cell for row in htm._inputCells for cell in row]
+        self.imageBuilder.setData(data)
+        
+    def show(self):
+        return self.imageBuilder.show()
+        
+    @classmethod
+    def cellActiveBW(cls, cell):
+        'A black and white representation of whether a cell is active'
+        if cell.wasActive:
+            return (255,255,255)
+        else:
+            return (0,0,0)
