@@ -83,9 +83,10 @@ class HTM(object):
         #Actually, just let the first synapses grow on their own in temporal 1
         
     def imagineNext(self):
-        'project down estimates for next time step to the input cells'
+        'project down estimates for next time step to the input cells, and step through'
         self._imagineStimulate(self.columns)
-        return self._imagineOverride(self._inputCells)
+        self._imagineOverride(self._inputCells)
+        self.__executeOne(False)
     
     @classmethod
     def _imagineStimulate(cls, columns):
