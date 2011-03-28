@@ -131,9 +131,10 @@ class Column(object):
         return allNeighbors[index]
     
     @property
-    def predicting(self):
-        for cell in self.cells:
-            if cell.predicting:
+    def predictingNext(self):
+        'is this column expected to get excited next?'
+        for segment in self.cells.segments:
+            if segment.nextStep and segment.active:
                 return True
         return False
     
