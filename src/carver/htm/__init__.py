@@ -14,6 +14,7 @@ import random
 import logging
 from math import exp, sqrt
 from copy import deepcopy
+from carver.utilities.dict_default import DictDefault
 
 INPUT_BIAS_PEAK = config.getfloat('init','input_bias_peak')
 INPUT_BIAS_STD_DEV = config.getfloat('init','input_bias_std_dev')
@@ -27,6 +28,7 @@ class HTM(object):
             self.cellsPerColumn = config.getint('init','cells_per_column')
             
         self._inputCells = [[]] #a 2-d map of cells monitoring input
+        self._updateSegments = DictDefault(list)
         
     @property
     def columns(self):
@@ -151,7 +153,8 @@ class HTM(object):
                 cell.clockTick()
                 
         pool_spatial(self)
-        pool_temporal(self, learning=True)
+        
+        self._updateSegments = pool_temporal(self, self._updateSegments, learning=True)
         
     def updateMatrix(self, newData):
         for x in xrange(len(newData)):

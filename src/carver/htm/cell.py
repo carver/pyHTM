@@ -54,8 +54,13 @@ class Cell(object):
         'prefer distal/sequence over proximal/input, if available'
         pass
     
-    def create_segment(self, htm):
-        seg = Segment()
+    def create_segment(self, htm, nextStep):
+        '''
+        @param htm: the htm network that contains the cell
+        @param nextStep: boolean for whether this segment indicates predicted 
+            firing in the very next time step 
+        '''
+        seg = Segment(nextStep=nextStep)
         
         #randomly choose input cells, from 
         synapseLen = self.__createSynapses(seg, htm.cells, SYNAPSES_PER_SEGMENT,
