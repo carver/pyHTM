@@ -3,9 +3,11 @@ Created on Dec 2, 2010
 
 @author: Jason Carver
 '''
+from carver.htm.config import config
 from carver.htm.synapse import Synapse
 
-SEGMENT_ACTIVATION_THRESHOLD = 15 #how many synapses need to fire to trigger a segment fire
+#how many synapses need to fire to trigger a segment fire
+SEGMENT_ACTIVATION_THRESHOLD = config.getint('constants','synapses_per_segment_threshold')
 
 class Segment(object):
     '''
