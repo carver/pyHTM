@@ -90,20 +90,20 @@ class TestRecognitionTemporal(unittest.TestCase):
         h.initialize_input(self.left_block)
         
         #show a whole left->right pass, 5 times
-        steps = 14*5*10
-        goright = TranslateInput(self.left_block, shift=(1,0))
+        steps = 14*5
+        goright = TranslateInput(self.left_block, shift=(0,1))
         h.execute(goright.dataGenerator(), ticks=steps-1)
         
         #show a whole right->left pass, 5 times
-        goleft = TranslateInput(self.right_block, shift=(-1,0))
+        goleft = TranslateInput(self.right_block, shift=(0,-1))
         h.execute(goleft.dataGenerator(), ticks=steps-1)
         
         #show a whole top->bottom pass, 5 times
-        godown = TranslateInput(self.top_block, shift=(0,1))
+        godown = TranslateInput(self.top_block, shift=(1,0))
         h.execute(godown.dataGenerator(), ticks=steps-1)
         
         #show a whole bottom->top pass, 5 times
-        goup = TranslateInput(self.bottom_block, shift=(0,-1))
+        goup = TranslateInput(self.bottom_block, shift=(-1,0))
         h.execute(goup.dataGenerator(), ticks=steps-1)
         
         #TODO test imagination
@@ -112,25 +112,25 @@ class TestRecognitionTemporal(unittest.TestCase):
             learning=False)
         
         #imagine 9 more steps
-#        for _ in xrange(10):
+#        for _ in xrange(3):
 #            h.imagineNext()
             
         #downstream the last step to project back into the input,
         #see if you have a block that is on the right side
         h._imagineStimulate(h.columns)
-        allStimulation = [cell.stimulation for row in h._inputCells for cell in row] 
-        maxStim = max(allStimulation)
+        allStimulation = [(cell.stimulation, cell.wasActive) for row in h._inputCells for cell in row] 
+        maxStim = max(allStimulation)[0]
         
         white = (255,255,255)
         black = (0,0,0)
         percentSynapsesForActivation = float(SEGMENT_ACTIVATION_THRESHOLD)/SYNAPSES_PER_SEGMENT
-        def stimToRGB(stim):
+        def stimToRGB(cellTuple):
+            (stim, active) = cellTuple
             percentStimulated = stim/maxStim
-            activated = percentStimulated >= percentSynapsesForActivation
-            if activated:
-                return (255,int(percentStimulated*255),255)
-            else:
-                return (0,int(percentStimulated*255),0)
+            red =  255 if active else 0
+            green = int(percentStimulated*255)
+            blue = 255 if percentStimulated >= percentSynapsesForActivation else 0
+            return (red, green, blue)
         
         img = ImageBuilder([h.width, h.length], stimToRGB)
         img.setData(allStimulation)
