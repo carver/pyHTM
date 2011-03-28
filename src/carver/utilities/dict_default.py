@@ -14,10 +14,10 @@ class DictDefault(dict):
         '''
         Constructor
         '''
-        dict.__init__(*args, **kwargs)
+        dict.__init__(self, *args, **kwargs)
         self.newValueFunc = newValueFunc
         
     def __getitem__(self, key):
-        if not dict.has_key(key):
+        if not dict.has_key(self, key):
             dict.__setitem__(self,key,self.newValueFunc())
         return dict.__getitem__(self, key)
