@@ -21,6 +21,8 @@ def pool_spatial(htm):
     *column overlap boost and cutoff are swapped from pseudocode, details inline
         see _spatial_overlap
     *time and inputData removed from code - used a data producer model, linked to htm 
+    *getBestMatchingSegment now takes an argument for whether it is a nextStep segment or a sequence one
+        inspired by binarybarry on http://www.numenta.com/phpBB2/viewtopic.php?t=1403
     '''
     
     _spatial_overlap(htm)
@@ -122,9 +124,12 @@ def _temporal_phase1(htm, learning, updateSegments):
                 
         #Learning Phase 1, p41
         if learning and not learningCellChosen:
-            cell = col.bestCell()
+            cell, seg = col.bestCell(nextStep=True)
             cell.learning = True
-            seg = cell.create_segment(htm, nextStep=True)
+            
+            if seg is None:
+                seg = cell.create_segment(htm, nextStep=True)
+                
             updateSegments[cell].append(seg)
             
     return updateSegments
@@ -142,7 +147,7 @@ def _temporal_phase2(htm, updateSegments, learning):
         #for each cell, grab the best segment. right now, this does not prevent 
         #duplication of learning on the best segment
         if learning and cell.predicting:
-            bestSeg = cell.bestMatchingSegment()
+            bestSeg = cell.bestMatchingSegment(nextStep=False)
             if bestSeg is None:
                 bestSeg = cell.create_segment(htm, nextStep=False)
             updateSegments[cell].append(bestSeg)
