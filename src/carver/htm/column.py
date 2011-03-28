@@ -78,20 +78,23 @@ class Column(object):
     def neighbors(self):
         return self.htm.neighbors(self)
     
-    def bestCell(self):
+    def bestCell(self, nextStep=True):
         '#see htm doc 0.1.1 pg 45: getBestMatchingCell'
         bestCell = None
         bestCellFiringSynapseCount = 0
+        bestSeg = None
         
         #find cell with best best matching segment
         for cell in self.cells:
-            seg = cell.bestMatchingSegment()
+            seg = cell.bestMatchingSegment(nextStep)
             if seg and len(seg.synapses_firing()) > bestCellFiringSynapseCount:
                 bestCellFiringSynapseCount = len(seg.synapses_firing())
                 bestCell = cell
+                bestSeg = seg
             
         #if none, pick the one with the fewest segments
         if bestCell is None:
+            bestSeg = None
             fewestSegments = len(self.cells[0].segments)
             bestCell = self.cells[0]
             for cell in self.cells[1:]:
@@ -99,7 +102,7 @@ class Column(object):
                     bestCell = cell
                     fewestSegments = len(cell.segments)
             
-        return bestCell
+        return (bestCell, bestSeg)
     
     def distance_to(self, x, y):
         #map column's x,y values to input space:

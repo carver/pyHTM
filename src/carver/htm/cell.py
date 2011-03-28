@@ -98,7 +98,7 @@ class Cell(object):
             if seg.active:
                 return seg
             
-    def bestMatchingSegment(self):
+    def bestMatchingSegment(self, nextStep):
         '''
         For this cell, find the segment with the largest 
         number of active synapses. This routine is aggressive in finding the best 
@@ -107,10 +107,11 @@ class Cell(object):
         activationThreshold, but must be above minThreshold. The routine 
         returns the segment index. If no segments are found, then None is 
         returned. 
+        @param nextStep: should the segment be of the nextStep type, or all-time prediction?
         '''
         bestSegment = None
         bestSegmentSynapseCount = MIN_THRESHOLD
-        for seg in self.segments:
+        for seg in filter(lambda seg: seg.nextStep == nextStep, self.segments):
             synapseCount = len(seg.synapses_firing(requireConnection=False))
             if synapseCount > bestSegmentSynapseCount:
                 bestSegmentSynapseCount = synapseCount

@@ -21,6 +21,8 @@ def pool_spatial(htm):
     *column overlap boost and cutoff are swapped from pseudocode, details inline
         see _spatial_overlap
     *time and inputData removed from code - used a data producer model, linked to htm 
+    *getBestMatchingSegment now takes an argument for whether it is a nextStep segment or a sequence one
+        inspired by binarybarry on http://www.numenta.com/phpBB2/viewtopic.php?t=1403
     '''
     
     _spatial_overlap(htm)
@@ -37,7 +39,7 @@ def pool_temporal(htm, updateSegments, learning=True):
     updateSegments = _temporal_phase2(htm, updateSegments, learning)
     
     if learning:
-        _temporal_phase3(htm, updateSegments)
+        updateSegments = _temporal_phase3(htm, updateSegments)
     
     return updateSegments
     
@@ -122,9 +124,12 @@ def _temporal_phase1(htm, learning, updateSegments):
                 
         #Learning Phase 1, p41
         if learning and not learningCellChosen:
-            cell = col.bestCell()
+            cell, seg = col.bestCell(nextStep=True)
             cell.learning = True
-            seg = cell.create_segment(htm, nextStep=True)
+            
+            if seg is None:
+                seg = cell.create_segment(htm, nextStep=True)
+                
             updateSegments[cell].append(seg)
             
     return updateSegments
@@ -132,9 +137,6 @@ def _temporal_phase1(htm, learning, updateSegments):
 def _temporal_phase2(htm, updateSegments, learning):
     'Phase 2, p40'
     for cell in htm.cells:
-        if learning and cell not in updateSegments:
-            updateSegments[cell] = []
-            
         for seg in cell.segments:
             if seg.active:
                 cell.predicting = True
@@ -145,7 +147,7 @@ def _temporal_phase2(htm, updateSegments, learning):
         #for each cell, grab the best segment. right now, this does not prevent 
         #duplication of learning on the best segment
         if learning and cell.predicting:
-            bestSeg = cell.bestMatchingSegment()
+            bestSeg = cell.bestMatchingSegment(nextStep=False)
             if bestSeg is None:
                 bestSeg = cell.create_segment(htm, nextStep=False)
             updateSegments[cell].append(bestSeg)
@@ -163,3 +165,5 @@ def _temporal_phase3(htm, updateSegments):
             for seg in updateSegments[cell]:
                 seg.adapt_down()
             updateSegments[cell] = []
+            
+    return updateSegments
