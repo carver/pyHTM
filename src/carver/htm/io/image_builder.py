@@ -51,3 +51,7 @@ class InputCellsDisplay(object):
             return (255,255,255)
         else:
             return (0,0,0)
+        
+    @classmethod
+    def showNow(cls, htm):
+        cls(htm).show()

@@ -9,7 +9,7 @@ from carver.htm.ui.excite_history import ExciteHistory
 from carver.htm.io.objectrecognize import ObjectRecognize
 from carver.htm.io.translate_input import TranslateInput
 from PIL import Image
-from carver.htm.io.image_builder import ImageBuilder
+from carver.htm.io.image_builder import ImageBuilder, InputCellsDisplay
 from carver.htm.segment import SEGMENT_ACTIVATION_THRESHOLD
 from carver.htm.synapse import SYNAPSES_PER_SEGMENT
 
@@ -111,6 +111,8 @@ class TestRecognitionTemporal(unittest.TestCase):
         h.execute(dataGenerator=goright.dataGenerator(), ticks=3, 
             learning=False)
         
+        InputCellsDisplay.showNow(h)
+        
         #imagine 9 more steps
 #        for _ in xrange(3):
 #            h.imagineNext()
@@ -118,18 +120,18 @@ class TestRecognitionTemporal(unittest.TestCase):
         #downstream the last step to project back into the input,
         #see if you have a block that is on the right side
         h._imagineStimulate(h.columns)
-        allStimulation = [(cell.stimulation, cell.wasActive) for row in h._inputCells for cell in row] 
-        maxStim = max(allStimulation)[0]
+        allStimulation = [cell.stimulation for row in h._inputCells for cell in row] 
+        maxStim = max(allStimulation)
         
         white = (255,255,255)
         black = (0,0,0)
         percentSynapsesForActivation = float(SEGMENT_ACTIVATION_THRESHOLD)/SYNAPSES_PER_SEGMENT
-        def stimToRGB(cellTuple):
-            (stim, active) = cellTuple
+        def stimToRGB(stim):
             percentStimulated = stim/maxStim
-            red =  255 if active else 0
+            triggered = percentStimulated >= percentSynapsesForActivation
+            red =  255 if triggered else 0
             green = int(percentStimulated*255)
-            blue = 255 if percentStimulated >= percentSynapsesForActivation else 0
+            blue = 255 if triggered else 0
             return (red, green, blue)
         
         img = ImageBuilder([h.width, h.length], stimToRGB)
