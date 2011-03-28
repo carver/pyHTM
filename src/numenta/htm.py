@@ -132,9 +132,6 @@ def _temporal_phase1(htm, learning, updateSegments):
 def _temporal_phase2(htm, updateSegments, learning):
     'Phase 2, p40'
     for cell in htm.cells:
-        if learning and cell not in updateSegments:
-            updateSegments[cell] = []
-            
         for seg in cell.segments:
             if seg.active:
                 cell.predicting = True
