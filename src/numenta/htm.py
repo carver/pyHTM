@@ -10,6 +10,7 @@ http://www.numenta.com/htm-overview/education.php
 
 from carver.htm.config import config
 from carver.htm.synapse import CONNECTED_CUTOFF
+from carver.utilities.dict_default import DictDefault
 
 #one column out of n should fire:
 desiredLocalActivity = config.getint('constants','desiredLocalActivity')
@@ -30,13 +31,15 @@ def pool_spatial(htm):
     
     htm.inhibitionRadius = inhibitionRadius
 
-def pool_temporal(htm, learning=True):
-    updateSegments = _temporal_phase1(htm, learning)
+def pool_temporal(htm, updateSegments, learning=True):
+    updateSegments = _temporal_phase1(htm, learning, updateSegments)
             
     updateSegments = _temporal_phase2(htm, updateSegments, learning)
     
     if learning:
         _temporal_phase3(htm, updateSegments)
+    
+    return updateSegments
     
 def _spatial_overlap(htm):
     'Overlap, p 35'
@@ -88,11 +91,13 @@ def _spatial_learning(htm, activeColumns):
         
     return htm.average_receptive_field_size()
 
-def _temporal_phase1(htm, learning):
-    'Phase 1, p40'
-    
-    #hash from cell to a list of segments
-    updateSegments = {}
+def _temporal_phase1(htm, learning, updateSegments):
+    '''
+    Phase 1, p40
+    @param htm: htm network object
+    @param learning: boolean describing whether the network is learning now
+    @param updateSegments: hash from cell to a list of segments to update when cell becomes active
+    '''
     
     for col in htm.columns_active():
         buPredicted = False
@@ -120,7 +125,7 @@ def _temporal_phase1(htm, learning):
             cell = col.bestCell()
             cell.learning = True
             seg = cell.create_segment(htm, nextStep=True)
-            updateSegments[cell] = [seg]
+            updateSegments[cell].append(seg)
             
     return updateSegments
             
@@ -153,6 +158,8 @@ def _temporal_phase3(htm, updateSegments):
         if cell.learning:
             for seg in updateSegments[cell]:
                 seg.adapt_up()
+            updateSegments[cell] = []
         elif not cell.predicting and cell.predicted:
             for seg in updateSegments[cell]:
                 seg.adapt_down()
+            updateSegments[cell] = []
