@@ -20,12 +20,14 @@ class Segment(object):
     '''
 
 
-    def __init__(self, distal=True):
+    def __init__(self, distal=True, nextStep=False):
         '''
-        
+        @param nextStep: boolean for whether this segment indicates predicted 
+            firing in the very next time step 
         '''
         self.synapses = []
         self.distal = distal
+        self.nextStep = nextStep
         
     def create_synapse(self, input):
         'input is either the data coming into the layer or the previous cell in network'
