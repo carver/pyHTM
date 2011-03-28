@@ -133,9 +133,10 @@ class Column(object):
     @property
     def predictingNext(self):
         'is this column expected to get excited next?'
-        for segment in self.cells.segments:
-            if segment.nextStep and segment.active:
-                return True
+        for cell in self.cells:
+            for segment in cell.segments:
+                if segment.nextStep and segment.active:
+                    return True
         return False
     
     def __eq__(self, another):
