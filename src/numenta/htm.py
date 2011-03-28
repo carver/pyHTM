@@ -37,7 +37,7 @@ def pool_temporal(htm, updateSegments, learning=True):
     updateSegments = _temporal_phase2(htm, updateSegments, learning)
     
     if learning:
-        _temporal_phase3(htm, updateSegments)
+        updateSegments = _temporal_phase3(htm, updateSegments)
     
     return updateSegments
     
@@ -160,3 +160,5 @@ def _temporal_phase3(htm, updateSegments):
             for seg in updateSegments[cell]:
                 seg.adapt_down()
             updateSegments[cell] = []
+            
+    return updateSegments
