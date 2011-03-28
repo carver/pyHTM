@@ -91,7 +91,7 @@ class HTM(object):
     def _imagineStimulate(cls, columns):
         'testable step one of imagineNext'
         for col in columns:
-            if col.active:
+            if col.predicting:
                 down_scale = len(col.synapsesConnected)
                 activityPerSynapse = float(1) / down_scale
                 

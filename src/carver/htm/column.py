@@ -130,6 +130,13 @@ class Column(object):
         index = min(k-1,len(allNeighbors)-1)
         return allNeighbors[index]
     
+    @property
+    def predicting(self):
+        for cell in self.cells:
+            if cell.predicting:
+                return True
+        return False
+    
     def __eq__(self, another):
         if not hasattr(another, 'htm') or not hasattr(another, 'x') or \
             not hasattr(another, 'y') or not hasattr(another, 'boost'):
