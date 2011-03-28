@@ -3,6 +3,8 @@ Created on Dec 3, 2010
 
 @author: Jason Carver
 '''
+from carver.htm.synapse import SYNAPSES_PER_SEGMENT
+from carver.htm.segment import SEGMENT_ACTIVATION_THRESHOLD
 
 class InputCell(object):
     '''
@@ -45,8 +47,14 @@ class InputCell(object):
         
     def override(self):
         self.overrideInput = True
-        #TODO move magic number 0.8 into .properties file, or make htm understand float
-        self.stimulationPast = 1 if self.stimulation > 0.8 else 0
+        
+        percentSynapsesForActivation = float(SEGMENT_ACTIVATION_THRESHOLD)/SYNAPSES_PER_SEGMENT
+        
+        if self.stimulation >= percentSynapsesForActivation:
+            self.stimulationPast = 1
+        else:
+            self.stimulationPast = 0
+            
         self.__resetStimulation()
         
         
