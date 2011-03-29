@@ -107,10 +107,12 @@ class TestRecognitionTemporal(unittest.TestCase):
         goup = TranslateInput(self.bottom_block, shift=(-1,0))
         h.execute(goup.dataGenerator(), ticks=steps-1)
         
-        #TODO test imagination
+        #TODO: test imagination automaticall
+        
         #do three steps of block starting left and moving right
         h.execute(dataGenerator=goright.dataGenerator(), ticks=3, 
-            learning=False) #postTick=ColumnDisplay.showNow
+            learning=False, postTick=ColumnDisplay.showNow)
+        #the displays here should be mostly green and black, but a bit of purple and red is ok
         
         InputCellsDisplay.showNow(h)
         
