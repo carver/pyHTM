@@ -55,10 +55,11 @@ class Synapse(object):
 
 class SynapseState(object):
     
-    def __init__(self, synapse, inputWasActive):
+    def __init__(self, synapse, inputWasActive, segment):
         self.synapse = synapse
         self.inputWasActive = inputWasActive
+        self.segment = segment
         
     @classmethod
-    def captureSynapseStates(cls, synapses):
-        return map(lambda syn: cls(syn, syn.is_firing(requireConnection=False)), synapses)
+    def captureSegmentState(cls, segment):
+        return map(lambda syn: cls(syn, syn.is_firing(requireConnection=False), segment), segment.synapses)

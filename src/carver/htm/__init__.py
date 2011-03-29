@@ -16,6 +16,7 @@ from math import exp, sqrt
 from copy import deepcopy
 from carver.utilities.dict_default import DictDefault
 from carver.htm.synapse import SynapseState
+from carver.htm.segment import Segment
 
 INPUT_BIAS_PEAK = config.getfloat('init','input_bias_peak')
 INPUT_BIAS_STD_DEV = config.getfloat('init','input_bias_std_dev')
@@ -163,16 +164,22 @@ class HTM(object):
         if EXTENSION_NEXT_STEP_PENALTY:
             for cell in self.cells:
                 #mark prediction of immediate next step
+                cell.predictingNext = False
                 for segment in cell.segmentsNear:
                     if segment.active:
                         cell.predictingNext = True
                     
-                        #penalize
-                        if not cell.active:
-                            segment.adapt_down()
-                            while segment in self._updateSegments[cell]:
-                                self._updateSegments[cell].remove(segment)
-                
+                if cell.predictingNext and not cell.active:
+                    #penalize only active near segments
+                    otherSynapseStates = []
+                    for synapses in self._updateSegments[cell]:
+                        if len(synapses) and synapses[0].segment == segment:
+                            Segment.adapt_down(synapses)
+                        else:
+                            otherSynapseStates.append(synapses)
+                            
+                    self._updateSegments.reset(cell)
+                    self._updateSegments.addAll(cell, otherSynapseStates)
         
     def updateMatrix(self, newData):
         for x in xrange(len(newData)):
@@ -241,8 +248,11 @@ class UpdateSegments(DictDefault):
         DictDefault.__init__(self, newValueFunc=list)
         
     def add(self, cell, segment):
-        states = SynapseState.captureSynapseStates(segment.synapses)
+        states = SynapseState.captureSegmentState(segment)
         self[cell].append(states)
         
     def reset(self, cell):
         self[cell] = []
+        
+    def addAll(self, cell, segmentStates):
+        self[cell].extend(segmentStates)
