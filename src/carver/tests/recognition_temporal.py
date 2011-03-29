@@ -110,13 +110,15 @@ class TestRecognitionTemporal(unittest.TestCase):
         #TODO test imagination
         #do three steps of block starting left and moving right
         h.execute(dataGenerator=goright.dataGenerator(), ticks=3, 
-            learning=False, postTick=ColumnDisplay.showNow)
+            learning=False) #postTick=ColumnDisplay.showNow
         
         InputCellsDisplay.showNow(h)
         
         #imagine 9 more steps
-#        for _ in xrange(3):
+#        for _ in xrange(9):
 #            h.imagineNext()
+#            
+#        InputCellsDisplay.showNow(h)
             
         #downstream the last step to project back into the input,
         #see if you have a block that is on the right side
