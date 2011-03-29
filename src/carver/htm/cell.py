@@ -41,10 +41,33 @@ class Cell(object):
     def predicted(self):
         return self.__predicted
     
+    @property
+    def predictedNext(self):
+        return self.__predictedNext
+    
+    @property
+    def predictingNext(self):
+        for segment in self.segments:
+            if segment.nextStep and segment.active:
+                return True
+        return False
+    
+    @property
+    def segmentsNear(self):
+        return self.__segmentsFilterNextStep(True)
+    
+    @property
+    def segmentsFar(self):
+        return self.__segmentsFilterNextStep(False)
+    
+    def __segmentsFilterNextStep(self, nextStep):
+        return filter(lambda seg: seg.nextStep == nextStep, self.segments)
+    
     def clockTick(self):
         self.__predicted = self.predicting
         self.__wasActive = self.active
         self.__wasLearning = self.learning
+        self.__predictedNext = self.predictingNext
         
         self.predicting = False
         self.active = False
@@ -92,9 +115,9 @@ class Cell(object):
     def __hash__(self):
         return 1 #TODO: make hashable
     
-    def activeSegment(self):
+    def activeSegmentNear(self):
         'prefer distal, return hits from segments connected to other cells that were active'
-        for seg in self.segments:
+        for seg in self.segmentsNear:
             if seg.active:
                 return seg
             

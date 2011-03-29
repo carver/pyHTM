@@ -140,6 +140,14 @@ class Column(object):
                 return True
         return False
     
+    @property
+    def predictedNext(self):
+        'is this column expected to get excited next?'
+        for cell in self.cells:
+            if cell.predictedNext:
+                return True
+        return False
+    
     def __eq__(self, another):
         if not hasattr(another, 'htm') or not hasattr(another, 'x') or \
             not hasattr(another, 'y') or not hasattr(another, 'boost'):
