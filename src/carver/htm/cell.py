@@ -26,6 +26,8 @@ class Cell(object):
         self.__predicted = False #read-only
         self.learning = False
         self.__wasLearning = False #read-only
+        self.predictingNext = False
+        self.__predictedNext = False #read-only
         
         self.segments = [Segment() for i in xrange(SEGMENTS_PER_CELL)]
        
@@ -46,13 +48,6 @@ class Cell(object):
         return self.__predictedNext
     
     @property
-    def predictingNext(self):
-        for segment in self.segments:
-            if segment.nextStep and segment.active:
-                return True
-        return False
-    
-    @property
     def segmentsNear(self):
         return self.__segmentsFilterNextStep(True)
     
@@ -70,6 +65,7 @@ class Cell(object):
         self.__predictedNext = self.predictingNext
         
         self.predicting = False
+        self.predictingNext = False
         self.active = False
         self.learning = False
     
