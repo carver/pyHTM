@@ -26,7 +26,7 @@ class InputCell(object):
         self.overrideInput = False
         self.stimulationPast = 0
         
-    def __resetStimulation(self):
+    def resetStimulation(self):
         self.stimulation = 0.0
         
     @property
@@ -47,6 +47,6 @@ class InputCell(object):
         self.overrideInput = True
         #TODO move magic number 0.8 into .properties file, or make htm understand float
         self.stimulationPast = 1 if self.stimulation > 0.8 else 0
-        self.__resetStimulation()
+        self.resetStimulation()
         
         
