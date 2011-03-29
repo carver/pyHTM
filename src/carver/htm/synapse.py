@@ -58,3 +58,13 @@ class Synapse(object):
         
     def __str__(self):
         return '{p:%.3f,c:%s,i:%s}' % (self.permanence, self.connected, self.is_firing(False))
+
+class SynapseState(object):
+    
+    def __init__(self, synapse, inputWasActive):
+        self.synapse = synapse
+        self.inputWasActive = inputWasActive
+        
+    @classmethod
+    def captureSynapseStates(cls, synapses):
+        return map(lambda syn: cls(syn, syn.is_firing(requireConnection=False)), synapses)

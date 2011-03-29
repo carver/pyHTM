@@ -142,6 +142,14 @@ class Column(object):
     
     @property
     def predictedNext(self):
+        'is this column expected to get excited next?'
+        for cell in self.cells:
+            if cell.predictedNext:
+                return True
+        return False
+    
+    @property
+    def predictedNext(self):
         'was this column expected to get excited next?'
         for cell in self.cells:
             if cell.predictedNext:

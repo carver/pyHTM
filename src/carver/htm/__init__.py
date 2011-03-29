@@ -15,9 +15,11 @@ import logging
 from math import exp, sqrt
 from copy import deepcopy
 from carver.utilities.dict_default import DictDefault
+from carver.htm.synapse import SynapseState
 
 INPUT_BIAS_PEAK = config.getfloat('init','input_bias_peak')
 INPUT_BIAS_STD_DEV = config.getfloat('init','input_bias_std_dev')
+EXTENSION_NEXT_STEP_PENALTY = config.getboolean('extensions', 'next_step_penalty')
 
 class HTM(object):
     def __init__(self, cellsPerColumn=None):
@@ -28,7 +30,7 @@ class HTM(object):
             self.cellsPerColumn = config.getint('init','cells_per_column')
             
         self._inputCells = [[]] #a 2-d map of cells monitoring input
-        self._updateSegments = DictDefault(list)
+        self._updateSegments = UpdateSegments()
         
     @property
     def columns(self):
@@ -159,6 +161,23 @@ class HTM(object):
         #non-Numenta optimization:
         #track whether cell is predicted next
         #penalize near segments for failing immediately
+        if EXTENSION_NEXT_STEP_PENALTY:
+            for cell in self.cells:
+                #mark prediction of immediate next step
+                for segment in cell.segmentsNear:
+                    if segment.active:
+                        cell.predictingNext = True
+                    
+                        #penalize
+                        if not cell.active:
+                            segment.adapt_down()
+                            while segment in self._updateSegments[cell]:
+                                self._updateSegments[cell].remove(segment)
+                
+        
+        #non-Numenta optimization:
+        #track whether cell is predicted next
+        #penalize near segments for failing immediately
         for cell in self.cells:
             penalize = not cell.active and cell.predictedNext
             
@@ -233,3 +252,15 @@ class HTM(object):
             for syn in c.synapsesConnected:
                 radii.append(((c.x-syn.input.x)**2 + (c.y-syn.input.y)**2)**0.5)
         return sum(radii)/len(radii)
+
+class UpdateSegments(DictDefault):
+    
+    def __init__(self):
+        DictDefault.__init__(self, newValueFunc=list)
+        
+    def add(self, cell, segment):
+        states = SynapseState.captureSynapseStates(segment.synapses)
+        self[cell].append(states)
+        
+    def reset(self, cell):
+        self[cell] = []

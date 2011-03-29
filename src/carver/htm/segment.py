@@ -5,9 +5,11 @@ Created on Dec 2, 2010
 '''
 from carver.htm.config import config
 from carver.htm.synapse import Synapse
+import random
 
 #how many synapses need to fire to trigger a segment fire
 SEGMENT_ACTIVATION_THRESHOLD = config.getint('constants','synapses_per_segment_threshold')
+MAX_NEW_SYNAPSES = config.getint('constants','max_new_synapses')
 
 class Segment(object):
     '''
@@ -31,10 +33,11 @@ class Segment(object):
         
     def create_synapse(self, input):
         'input is either the data coming into the layer or the previous cell in network'
-        self.add_synapse(Synapse(input))
+        return self.add_synapse(Synapse(input))
         
     def add_synapse(self, syn):
         self.synapses.append(syn)
+        return syn
         
     def synapses_firing(self, requireConnection=True):
         '''
@@ -87,27 +90,34 @@ class Segment(object):
     def __str__(self):
         return 'segment active?%s [%s]' % (self.active, ';'.join(map(str,self.synapses)))
     
-    def adapt_up(self):
+    @classmethod
+    def adapt_up(cls, synapseStates):
         '''HTM v0.1.1 page 46 adaptSegments:
         All active synapses get their permanence counts incremented. All other 
         synapses get their permanence counts decremented. 
         '''
-        for syn in self.synapses:
-            if syn.is_firing(requireConnection=False):
-                syn.permanence_increment()
+        for state in synapseStates:
+            if state.inputWasActive:
+                state.synapse.permanence_increment()
             else:
-                syn.permanence_decrement()
-        
-        #TODO: add new synapses if too few exist? Not sure if this is the right
-        #    place.  Reading: "After this step, any synapses in segmentUpdate 
-        #    that do yet exist get added with a permanence count of initialPerm." 
-        #    If so, be sure to add to adapt_down, too.
+                state.synapse.permanence_decrement()
 
-                
-    def adapt_down(self):
+    @classmethod
+    def adapt_down(cls, synapseStates):
         '''HTM v0.1.1 page 46 adaptSegments:
         Synapses on the active list get their permanence counts decremented. 
         '''
-        for syn in self.synapses:
-            if syn.is_firing(requireConnection=False):
-                syn.permanence_decrement()
+        for state in synapseStates:
+            if state.inputWasActive:
+                state.synapse.permanence_decrement()
+                
+    def round_out_synapses(self, htm):
+        'if not enough synapses active, add more synapses up to configured amount'
+        synapses = self.synapses_firing(requireConnection=False)
+        
+        missingSynapses = MAX_NEW_SYNAPSES - len(synapses)
+        if missingSynapses > 0:
+            lastLearningCells = filter(lambda cell: cell.wasLearning, htm.cells)
+            for _ in xrange(missingSynapses):
+                cell = random.choice(lastLearningCells)
+                self.create_synapse(cell)

@@ -26,10 +26,13 @@ class TestColumn(unittest.TestCase):
         cell = Cell()
         startingSegments = config.getint('init','segments_per_cell')
         self.assertEqual(startingSegments, len(cell.segments))
-        cell.create_segment(h)
+        cell.create_segment(h, nextStep=False)
         self.assertEqual(startingSegments+1, len(cell.segments))
+        cell.create_segment(h, nextStep=True)
+        self.assertEqual(startingSegments+2, len(cell.segments))
         
         #make sure newly created segment has the right number of synapses
+        self.assertNotEqual(0, len(cell.segments[-2].synapses))
         self.assertNotEqual(0, len(cell.segments[-1].synapses))
         
     def testClockTick(self):
