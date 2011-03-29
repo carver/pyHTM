@@ -38,6 +38,12 @@ class Synapse(object):
         '''
         return self.input.wasActive and (self.connected or not requireConnection)
     
+    def will_fire(self, requireConnection=True):
+        '''
+        Will input fire?  Only valid for distal segments to other htm cells
+        '''
+        return self.input.active and (self.connected or not requireConnection)
+    
     def isInputLearning(self):
         if not hasattr(input, 'learning'):
             return False
