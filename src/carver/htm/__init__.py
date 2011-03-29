@@ -150,11 +150,28 @@ class HTM(object):
         from numenta.htm import pool_spatial, pool_temporal
         
         for cell in self.cells:
-                cell.clockTick()
+            cell.clockTick()
                 
         pool_spatial(self)
         
         self._updateSegments = pool_temporal(self, self._updateSegments, learning=True)
+        
+        #non-Numenta optimization:
+        #track whether cell is predicted next
+        #penalize near segments for failing immediately
+        for cell in self.cells:
+            penalize = not cell.active and cell.predictedNext
+            
+            #mark prediction of immediate next step
+            for segment in cell.segmentsNear:
+                if segment.active:
+                    cell.predictingNext = True
+                
+                if penalize:
+                    segment.adapt_down()
+                    while segment in self._updateSegments[cell]:
+                        self._updateSegments[cell].remove(segment)
+                
         
     def updateMatrix(self, newData):
         for x in xrange(len(newData)):
