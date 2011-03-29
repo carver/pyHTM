@@ -159,17 +159,16 @@ class HTM(object):
         #track whether cell is predicted next
         #penalize near segments for failing immediately
         for cell in self.cells:
-            penalize = not cell.active and cell.predictedNext
-            
             #mark prediction of immediate next step
             for segment in cell.segmentsNear:
                 if segment.active:
                     cell.predictingNext = True
                 
-                if penalize:
-                    segment.adapt_down()
-                    while segment in self._updateSegments[cell]:
-                        self._updateSegments[cell].remove(segment)
+                    #penalize
+                    if not cell.active:
+                        segment.adapt_down()
+                        while segment in self._updateSegments[cell]:
+                            self._updateSegments[cell].remove(segment)
                 
         
     def updateMatrix(self, newData):
