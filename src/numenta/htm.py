@@ -10,7 +10,7 @@ http://www.numenta.com/htm-overview/education.php
 
 from carver.htm.config import config
 from carver.htm.synapse import CONNECTED_CUTOFF
-from carver.utilities.dict_default import DictDefault
+from carver.htm.segment import Segment
 
 #one column out of n should fire:
 desiredLocalActivity = config.getint('constants','desiredLocalActivity')
@@ -130,7 +130,7 @@ def _temporal_phase1(htm, learning, updateSegments):
             if seg is None:
                 seg = cell.create_segment(htm, nextStep=True)
                 
-            updateSegments[cell].append(seg)
+            updateSegments.add(cell, seg)
             
     return updateSegments
             
@@ -142,7 +142,7 @@ def _temporal_phase2(htm, updateSegments, learning):
                 cell.predicting = True
                 
                 if learning:
-                    updateSegments[cell].append(seg)
+                    updateSegments.add(cell, seg)
             
         #for each cell, grab the best segment. right now, this does not prevent 
         #duplication of learning on the best segment
@@ -150,7 +150,10 @@ def _temporal_phase2(htm, updateSegments, learning):
             bestSeg = cell.bestMatchingSegment(nextStep=False)
             if bestSeg is None:
                 bestSeg = cell.create_segment(htm, nextStep=False)
-            updateSegments[cell].append(bestSeg)
+                
+            bestSeg.round_out_synapses(htm)
+            
+            updateSegments.add(cell, bestSeg)
     
     return updateSegments
 
@@ -158,12 +161,12 @@ def _temporal_phase3(htm, updateSegments):
     'Phase 3, p42'
     for cell in htm.cells:
         if cell.learning:
-            for seg in updateSegments[cell]:
-                seg.adapt_up()
-            updateSegments[cell] = []
+            for synapseStates in updateSegments[cell]:
+                Segment.adapt_up(synapseStates)
+            updateSegments.reset(cell)
         elif not cell.predicting and cell.predicted:
-            for seg in updateSegments[cell]:
-                seg.adapt_down()
-            updateSegments[cell] = []
+            for synapseStates in updateSegments[cell]:
+                Segment.adapt_down(synapseStates)
+            updateSegments.reset(cell)
             
     return updateSegments
