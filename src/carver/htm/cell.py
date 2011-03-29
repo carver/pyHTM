@@ -93,7 +93,7 @@ class Cell(object):
         return 1 #TODO: make hashable
     
     def activeSegment(self):
-        'prefer distal'
+        'prefer distal, return hits from segments connected to other cells that were active'
         for seg in self.segments:
             if seg.active:
                 return seg
