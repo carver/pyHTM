@@ -26,7 +26,7 @@ class Cell(object):
         self.__predicted = False #read-only
         self.learning = False
         self.__wasLearning = False #read-only
-        self.predictingNext = False
+        self.__predictingNext = None #cached-val
         self.__predictedNext = False #read-only
         
         self.segments = [Segment() for i in xrange(SEGMENTS_PER_CELL)]
@@ -54,6 +54,24 @@ class Cell(object):
     @property
     def segmentsFar(self):
         return self.__segmentsFilterNextStep(False)
+    
+    @property
+    def predictingNext(self):
+        if self.__predictingNext is not None:
+            return self.__predictingNext
+        
+        cache = False
+        for segment in self.segmentsNear:
+            if segment.active:
+                cache = True
+                break
+            
+        self.__predictingNext = cache
+        return self.__predictingNext
+    
+    @predictingNext.setter
+    def predictingNext(self, value):
+        self.__predictingNext = value
     
     def __segmentsFilterNextStep(self, nextStep):
         return filter(lambda seg: seg.nextStep == nextStep, self.segments)
