@@ -26,7 +26,7 @@ class Cell(object):
         self.__predicted = False #read-only
         self.learning = False
         self.__wasLearning = False #read-only
-        self.__predictingNext = None #cached-val
+        self.predictingNext = None #cached-val
         self.__predictedNext = False #read-only
         
         self.segments = [Segment() for i in xrange(SEGMENTS_PER_CELL)]
@@ -83,7 +83,7 @@ class Cell(object):
         self.__predictedNext = self.predictingNext
         
         self.predicting = False
-        self.predictingNext = False
+        self.predictingNext = None
         self.active = False
         self.learning = False
     
