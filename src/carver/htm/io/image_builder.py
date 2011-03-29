@@ -5,6 +5,11 @@ Created on Mar 23, 2011
 '''
 
 from PIL import Image
+from carver.htm import HTM
+from carver.htm.synapse import SYNAPSES_PER_SEGMENT
+from carver.htm.segment import SEGMENT_ACTIVATION_THRESHOLD
+
+percentSynapsesForActivation = float(SEGMENT_ACTIVATION_THRESHOLD)/SYNAPSES_PER_SEGMENT
 
 class ImageBuilder(object):
     '''
@@ -35,19 +40,22 @@ class ImageBuilder(object):
     def show(self):
         return self.img.show()
     
-class ColumnDisplay(object):
+class HTMDisplayBase(object):
+        
+    def show(self):
+        return self.imageBuilder.show()
+        
+    @classmethod
+    def showNow(cls, htm):
+        cls(htm).show()
+
+    
+class ColumnDisplay(HTMDisplayBase):
     def __init__(self, htm):
         width = len(htm._column_grid)
         length = len(htm._column_grid[0])
         self.imageBuilder = ImageBuilder((width, length), self.colStateColor)
         self.imageBuilder.setData(htm.columns)
-        
-    def show(self):
-        return self.imageBuilder.show()
-    
-    @classmethod
-    def showNow(cls, htm):
-        cls(htm).show()
         
     @classmethod
     def colStateColor(cls, column):
@@ -60,15 +68,44 @@ class ColumnDisplay(object):
         else:
             return (0,0,0)
 
+class InputReflectionOverlayDisplay(HTMDisplayBase):
+    'show the input cells, and the column activation pushed back onto the input space'
+    def __init__(self, htm):
+        self.imageBuilder = ImageBuilder((htm.width, htm.length), self.inputOverlay)
+        
+        HTM.stimulateFromColumns(htm.columns, lambda col: col.active)
+        HTM.normalize_input_stimulation(htm._inputCells)
+        
+        data = [(cell, cell.stimulation) for row in htm._inputCells for cell in row]
+        
+        for row in htm._inputCells:
+            for cell in row:
+                cell.resetStimulation()
+            
+        self.imageBuilder.setData(data)
+        
+    @classmethod
+    def inputOverlay(cls, cellInfo):
+        (cell, percentStimulated) = cellInfo
+        
+        triggered = percentStimulated >= percentSynapsesForActivation
+            
+        if cell.wasActive and triggered: #correct
+            return (0,int(percentStimulated*255),0)
+        elif cell.wasActive: #false negative
+            return (int(percentStimulated*255),0,0)
+        elif triggered: #false positive
+            return (int(percentStimulated*180),0,int(percentStimulated*180)) #purple
+        else:
+            gray = int(percentStimulated*255)
+            return (gray,gray,gray)
+        
     
-class InputCellsDisplay(object):
+class InputCellsDisplay(HTMDisplayBase):
     def __init__(self, htm):
         self.imageBuilder = ImageBuilder((htm.width, htm.length), self.cellActiveBW)
         data = [cell for row in htm._inputCells for cell in row]
         self.imageBuilder.setData(data)
-        
-    def show(self):
-        return self.imageBuilder.show()
         
     @classmethod
     def cellActiveBW(cls, cell):
@@ -77,7 +114,3 @@ class InputCellsDisplay(object):
             return (255,255,255)
         else:
             return (0,0,0)
-        
-    @classmethod
-    def showNow(cls, htm):
-        cls(htm).show()
