@@ -106,7 +106,7 @@ def _temporal_phase1(htm, learning, updateSegments):
         learningCellChosen = False
         for cell in col.cells:
             if cell.predicted:
-                seg = cell.activeSegment() #TODO: always return segment or protect against None
+                seg = cell.activeSegment()
                 
                 #distal dendrite segments = sequence memory
                 if seg and seg.distal:

@@ -35,6 +35,28 @@ class ImageBuilder(object):
     def show(self):
         return self.img.show()
     
+class ColumnDisplay(object):
+    def __init__(self, htm):
+        width = len(htm._column_grid)
+        length = len(htm._column_grid[0])
+        self.imageBuilder = ImageBuilder((width, length), self.colStateColor)
+        self.imageBuilder.setData(htm.columns)
+        
+    def show(self):
+        return self.imageBuilder.show()
+    
+    @classmethod
+    def showNow(cls, htm):
+        cls(htm).show()
+        
+    @classmethod
+    def colStateColor(cls, column):
+        if column.active:
+            return (0,255,0)
+        else:
+            return (0,0,0)
+
+    
 class InputCellsDisplay(object):
     def __init__(self, htm):
         self.imageBuilder = ImageBuilder((htm.width, htm.length), self.cellActiveBW)
