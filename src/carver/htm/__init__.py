@@ -243,7 +243,7 @@ class HTM(object):
     
     @classmethod
     def _max_input_stimulation(cls, inputCells):
-        return max(max(map(lambda cell: cell.stimulation, inputCells)))
+        return max(cell.stimulation for row in inputCells for cell in row)
     
     @classmethod
     def normalize_input_stimulation(cls, inputCells):

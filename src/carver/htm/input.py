@@ -24,11 +24,11 @@ class InputCell(object):
         self.predicted = False
         
         #currently used for downstream stimulation ("imagination")
-        self.__resetStimulation()
+        self.resetStimulation()
         self.overrideInput = False
         self.stimulationPast = 0
         
-    def __resetStimulation(self):
+    def resetStimulation(self):
         self.stimulation = 0.0
         
     @property
@@ -55,6 +55,6 @@ class InputCell(object):
         else:
             self.stimulationPast = 0
             
-        self.__resetStimulation()
+        self.resetStimulation()
         
         

@@ -10,7 +10,7 @@ from carver.htm.io.objectrecognize import ObjectRecognize
 from carver.htm.io.translate_input import TranslateInput
 from PIL import Image
 from carver.htm.io.image_builder import ImageBuilder, InputCellsDisplay,\
-    ColumnDisplay
+    ColumnDisplay, InputReflectionOverlayDisplay
 from carver.htm.segment import SEGMENT_ACTIVATION_THRESHOLD
 from carver.htm.synapse import SYNAPSES_PER_SEGMENT
 
@@ -111,7 +111,7 @@ class TestRecognitionTemporal(unittest.TestCase):
         
         #do three steps of block starting left and moving right
         h.execute(dataGenerator=goright.dataGenerator(), ticks=3, 
-            learning=False, postTick=ColumnDisplay.showNow)
+            learning=False, postTick=InputReflectionOverlayDisplay.showNow)
         #the displays here should be mostly green and black, but a bit of purple and red is ok
         
         InputCellsDisplay.showNow(h)
