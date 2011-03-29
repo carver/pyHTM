@@ -92,33 +92,31 @@ class HTM(object):
         self._imagineStimulate(self.columns)
         self._imagineOverride(self._inputCells)
         self.__executeOne(False)
-    
+        
     @classmethod
-    def _imagineStimulate(cls, columns):
-        'testable step one of imagineNext'
+    def stimulateFromColumns(cls, columns, columnFilter):
         for col in columns:
-            if col.predictingNext:
+            if columnFilter(col):
                 down_scale = len(col.synapsesConnected)
                 activityPerSynapse = float(1) / down_scale
                 
                 for synapse in col.synapsesConnected:
                     synapse.input.stimulate(activityPerSynapse)
+    
+    @classmethod
+    def _imagineStimulate(cls, columns):
+        'testable step one of imagineNext'
+        cls.stimulateFromColumns(columns, lambda col: col.predictingNext)
                     
     @classmethod
     def _imagineOverride(cls, inputCells):
         'testable step two of imagineNext'
                 
-        #flatten cell matrix
-        allInputs = []
+        cls.normalize_input_stimulation(inputCells)
+        
         for row in inputCells:
             for cell in row:
-                allInputs.append(cell)
-                
-        maxStim = max(map(lambda inCell: inCell.stimulation, allInputs))
-        if maxStim:
-            for inCell in allInputs:
-                inCell.stimulation /= maxStim
-                inCell.override()
+                cell.override()
         
     def executeOnce(self, data, learning=True, postTick=None):
         '''
@@ -242,6 +240,18 @@ class HTM(object):
             for syn in c.synapsesConnected:
                 radii.append(((c.x-syn.input.x)**2 + (c.y-syn.input.y)**2)**0.5)
         return sum(radii)/len(radii)
+    
+    @classmethod
+    def _max_input_stimulation(cls, inputCells):
+        return max(max(map(lambda cell: cell.stimulation, inputCells)))
+    
+    @classmethod
+    def normalize_input_stimulation(cls, inputCells):
+        maxStim = cls._max_input_stimulation(inputCells)
+        if maxStim:
+            for row in inputCells:
+                for cell in row:
+                    cell.stimulation /= maxStim
 
 class UpdateSegments(DictDefault):
     
