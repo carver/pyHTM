@@ -9,7 +9,8 @@ from carver.htm.ui.excite_history import ExciteHistory
 from carver.htm.io.objectrecognize import ObjectRecognize
 from carver.htm.io.translate_input import TranslateInput
 from PIL import Image
-from carver.htm.io.image_builder import ImageBuilder, InputCellsDisplay
+from carver.htm.io.image_builder import ImageBuilder, InputCellsDisplay,\
+    ColumnDisplay
 from carver.htm.segment import SEGMENT_ACTIVATION_THRESHOLD
 from carver.htm.synapse import SYNAPSES_PER_SEGMENT
 
@@ -109,7 +110,7 @@ class TestRecognitionTemporal(unittest.TestCase):
         #TODO test imagination
         #do three steps of block starting left and moving right
         h.execute(dataGenerator=goright.dataGenerator(), ticks=3, 
-            learning=False)
+            learning=False, postTick=ColumnDisplay.showNow)
         
         InputCellsDisplay.showNow(h)
         

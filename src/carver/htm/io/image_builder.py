@@ -51,8 +51,12 @@ class ColumnDisplay(object):
         
     @classmethod
     def colStateColor(cls, column):
-        if column.active:
+        if column.active and column.predictedNext: #correct
             return (0,255,0)
+        elif column.active: #false negative
+            return (255,0,0)
+        elif column.predictedNext: #false positive
+            return (180,0,180) #purple
         else:
             return (0,0,0)
 
