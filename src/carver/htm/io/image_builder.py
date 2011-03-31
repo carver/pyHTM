@@ -8,6 +8,7 @@ from PIL import Image
 from carver.htm import HTM
 from carver.htm.synapse import SYNAPSES_PER_SEGMENT
 from carver.htm.segment import FRACTION_SEGMENT_ACTIVATION_THRESHOLD
+from carver.htm.ui.excite_history import ExciteHistory
 
 class ImageBuilder(object):
     '''
@@ -47,6 +48,34 @@ class HTMDisplayBase(object):
     def showNow(cls, htm):
         cls(htm).show()
 
+class ActivityOverTimeDisplay(HTMDisplayBase):
+    def __init__(self, columnStates):
+        img = ImageBuilder([len(columnStates[0]), len(columnStates)], self.stateToRGB)
+        img.setData2D(columnStates)
+        img.rotate90()
+        self.imageBuilder = img
+        
+    def show(self):
+        print """*************** Graph History **************
+Y-Axis: All cells in the network, with the 4 cells per column grouped together
+X-Axis: Time
+Colors:
+\tblack: no activity
+\tgray: predicting
+\twhite: active  
+"""
+        HTMDisplayBase.show(self)
+        
+    @classmethod
+    def stateToRGB(cls, state):
+        if state == ExciteHistory.ACTIVE:
+            return (255, 255, 255)
+        elif state == ExciteHistory.PREDICTING:
+            return (127, 127, 127)
+        elif state == ExciteHistory.INACTIVE:
+            return (0, 0, 0)
+        else:
+            return (255, 0, 0) #unknown cell/column state
     
 class ColumnDisplay(HTMDisplayBase):
     def __init__(self, htm):
