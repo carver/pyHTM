@@ -71,7 +71,7 @@ class ColumnDisplay(HTMDisplayBase):
 class InputReflectionOverlayDisplay(HTMDisplayBase):
     'show the input cells, and the column activation pushed back onto the input space'
     def __init__(self, htm):
-        self.imageBuilder = ImageBuilder((htm.width, htm.length), self.inputOverlay)
+        self.imageBuilder = ImageBuilder((htm.inputWidth, htm.inputLength), self.inputOverlay)
         
         HTM.stimulateFromColumns(htm.columns, lambda col: col.active)
         HTM.normalize_input_stimulation(htm._inputCells)
