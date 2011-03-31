@@ -86,7 +86,7 @@ class TestRecognitionTemporal(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def testTemporalTest(self):
+    def testTemporalImagination(self):
         h = HTM(cellsPerColumn=3)
         h.initialize_input(self.left_block)
         
@@ -107,7 +107,7 @@ class TestRecognitionTemporal(unittest.TestCase):
         goup = TranslateInput(self.bottom_block, shift=(-1,0))
         h.execute(goup.dataGenerator(), ticks=steps-1)
         
-        #TODO: test imagination automaticall
+        #TODO: test imagination automatically
         
         #do three steps of block starting left and moving right
         h.execute(dataGenerator=goright.dataGenerator(), ticks=3, 
