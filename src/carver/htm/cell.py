@@ -121,6 +121,9 @@ class Cell(object):
         return seg
     
     def __createSynapses(self, segment, cells, maxSynapses, filterFunc):
+        if filterFunc is None:
+            filterFunc = lambda cell: True
+        
         alsoFilterSelf = lambda cell: filterFunc(cell) and cell!=self
         
         matchingCells = filter(alsoFilterSelf, cells)
