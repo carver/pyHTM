@@ -79,7 +79,7 @@ class Segment(object):
         
         learningSynapses = filter(lambda synapse: synapse.is_firing() and synapse.isInputLearning, 
             self.synapses)
-        return float(learningSynapses)/total >= FRACTION_SEGMENT_ACTIVATION_THRESHOLD
+        return float(len(learningSynapses))/total >= FRACTION_SEGMENT_ACTIVATION_THRESHOLD
     
     def __str__(self):
         return 'segment near?%s active?%s [%s]' % (self.nextStep, self.active, ';'.join(map(str,self.synapses)))
