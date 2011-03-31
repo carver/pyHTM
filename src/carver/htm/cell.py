@@ -99,7 +99,7 @@ class Cell(object):
         '''
         seg = Segment(nextStep=nextStep)
         
-        #randomly choose input cells, from 
+        #randomly choose input cells, from active non-self cells
         synapseLen = self.__createSynapses(seg, htm.cells, SYNAPSES_PER_SEGMENT,
             lambda c: c.wasLearning)
         
@@ -117,7 +117,9 @@ class Cell(object):
         return seg
     
     def __createSynapses(self, segment, cells, maxSynapses, filterFunc):
-        matchingCells = filter(filterFunc, cells)
+        alsoFilterSelf = lambda cell: filterFunc(cell) and cell!=self
+        
+        matchingCells = filter(alsoFilterSelf, cells)
         sampleSize = min(len(matchingCells), maxSynapses)
         synapseFrom = random.sample(matchingCells, sampleSize)
         
