@@ -93,7 +93,7 @@ class InputReflectionOverlayDisplay(HTMDisplayBase):
         if cell.wasActive and triggered: #correct
             return (0,int(percentStimulated*255),0)
         elif cell.wasActive: #false negative
-            return (int(percentStimulated*255),0,0)
+            return (255-int(percentStimulated*255),0,0)
         elif triggered: #false positive
             return (int(percentStimulated*180),0,int(percentStimulated*180)) #purple
         else:
