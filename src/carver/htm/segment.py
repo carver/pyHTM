@@ -39,12 +39,12 @@ class Segment(object):
         self.synapses.append(syn)
         return syn
         
-    def synapses_firing(self, requireConnection=True):
+    def old_firing_synapses(self, requireConnection=True):
         '''
         @param requireConnection: only include synapse if the synapse is connected
         @return an iterable of firing synapses
         '''
-        return filter(lambda synapse: synapse.is_firing(requireConnection=requireConnection), 
+        return filter(lambda synapse: synapse.was_firing(requireConnection=requireConnection), 
             self.synapses)
     
     def increase_permanences(self, byAmount):
@@ -76,8 +76,18 @@ class Segment(object):
         return self._areSynapsesAboveThreshold(filterFunc)
     
     @property
-    def activeFromLearningCells(self):
-        filterFunc = lambda synapse: synapse.is_firing() and synapse.isInputLearning
+    def wasActive(self):
+        '''
+        Did the segment fire? ie~ did enough synapses fire to reach the activation threshold
+        Timing note: a synapse is considered active if the cell it came from
+        was active in the previous step
+        '''
+        filterFunc = lambda synapse: synapse.was_firing(requireConnection=True)
+        return self._areSynapsesAboveThreshold(filterFunc)
+    
+    @property
+    def wasActiveFromLearningCells(self):
+        filterFunc = lambda synapse: synapse.was_firing() and synapse.wasInputLearning
         return self._areSynapsesAboveThreshold(filterFunc)
     
     def __str__(self):
@@ -106,7 +116,7 @@ class Segment(object):
                 
     def round_out_synapses(self, htm):
         'if not enough synapses active, add more synapses up to configured amount'
-        synapses = self.synapses_firing(requireConnection=False)
+        synapses = self.old_firing_synapses(requireConnection=False)
         
         missingSynapses = MAX_NEW_SYNAPSES - len(synapses)
         if missingSynapses > 0:

@@ -30,7 +30,7 @@ class Synapse(object):
     def connected(self):
         return self.permanence >= CONNECTED_CUTOFF
     
-    def is_firing(self, requireConnection=True):
+    def was_firing(self, requireConnection=True):
         '''
         Is the input firing?
         @param requireConnection: only return True if the synapse is connected 
@@ -38,7 +38,23 @@ class Synapse(object):
         '''
         return self.input.wasActive and (self.connected or not requireConnection)
     
-    def isInputLearning(self):
+    def is_firing(self, requireConnection=True):
+        '''
+        Is the input firing?
+        @param requireConnection: only return True if the synapse is connected 
+            if False: return True even if synapse is not connected
+        '''
+        return self.input.active and (self.connected or not requireConnection)
+    
+    def firing_at(self, timeDelta, requireConnection=True):
+        if timeDelta == 0:
+            return self.is_firing(requireConnection)
+        elif timeDelta == -1:
+            return self.was_firing(requireConnection)
+        else:
+            raise NotImplementedError
+    
+    def wasInputLearning(self):
         if not hasattr(input, 'learning'):
             return False
         else:
@@ -51,7 +67,7 @@ class Synapse(object):
         self.permanence = max(self.permanence - decrement_by, 0.0)
         
     def __str__(self):
-        return '{p:%.3f,c:%s,i:%s}' % (self.permanence, self.connected, self.is_firing(False))
+        return '{p:%.3f,c:%s,wf:%s,f:%s}' % (self.permanence, self.connected, self.was_firing(False), self.is_firing(False))
 
 class SynapseState(object):
     
@@ -61,5 +77,9 @@ class SynapseState(object):
         self.segment = segment
         
     @classmethod
-    def captureSegmentState(cls, segment):
-        return map(lambda syn: cls(syn, syn.is_firing(requireConnection=False), segment), segment.synapses)
+    def captureSegmentState(cls, segment, timeDelta):
+        '''
+        @param timeDelta: when capturing state, do you capture current or previous state?
+            current = 0; previous = -1
+        '''
+        return map(lambda syn: cls(syn, syn.firing_at(timeDelta, requireConnection=False), segment), segment.synapses)

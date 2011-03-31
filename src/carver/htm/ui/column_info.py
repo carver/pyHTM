@@ -23,7 +23,7 @@ class ColumnInfo(object):
         states = []
         for syn in self.col.synapses:
             state = '?'
-            inputFiring = syn.is_firing(requireConnection=False)
+            inputFiring = syn.was_firing(requireConnection=False)
             if syn.connected:
                 if inputFiring:
                     state = 'O'

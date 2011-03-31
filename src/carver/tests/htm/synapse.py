@@ -20,23 +20,46 @@ class TestSynapse(unittest.TestCase):
         pass
 
 
-    def testFiring(self):
+    def testWasFiring(self):
         input = Mock()
         input.wasActive = True
+        s = Synapse(input, permanence=CONNECTED_CUTOFF + 0.1)
+        self.assert_(s.was_firing())
+        self.assert_(s.was_firing(requireConnection=True))
+        self.assert_(s.was_firing(requireConnection=False))
+        
+        input = Mock()
+        input.wasActive = True
+        s = Synapse(input, permanence=CONNECTED_CUTOFF - 0.1)
+        self.assertFalse(s.was_firing())
+        self.assertFalse(s.was_firing(requireConnection=True))
+        self.assert_(s.was_firing(requireConnection=False))
+        
+        input = Mock()
+        input.wasActive = False
+        s = Synapse(input, permanence=CONNECTED_CUTOFF + 0.1)
+        self.assertFalse(s.was_firing())
+        self.assertFalse(s.was_firing(requireConnection=True))
+        self.assertFalse(s.was_firing(requireConnection=False))
+
+
+    def testIsFiring(self):
+        input = Mock()
+        input.active = True
         s = Synapse(input, permanence=CONNECTED_CUTOFF + 0.1)
         self.assert_(s.is_firing())
         self.assert_(s.is_firing(requireConnection=True))
         self.assert_(s.is_firing(requireConnection=False))
         
         input = Mock()
-        input.wasActive = True
+        input.active = True
         s = Synapse(input, permanence=CONNECTED_CUTOFF - 0.1)
         self.assertFalse(s.is_firing())
         self.assertFalse(s.is_firing(requireConnection=True))
         self.assert_(s.is_firing(requireConnection=False))
         
         input = Mock()
-        input.wasActive = False
+        input.active = False
         s = Synapse(input, permanence=CONNECTED_CUTOFF + 0.1)
         self.assertFalse(s.is_firing())
         self.assertFalse(s.is_firing(requireConnection=True))

@@ -61,6 +61,7 @@ class Cell(object):
     
     @property
     def predictingNext(self):
+        'whether there is a prediction for this cell to fire next'
         if self.__predictingNext is not None:
             return self.__predictingNext
         
@@ -142,19 +143,24 @@ class Cell(object):
     def __ne__(self, other):
         return not (self == other)
     
-    def activeSegmentNear(self):
+    def findSegmentWasActive(self, nextStep=True):
         'prefer distal, return hits from segments connected to other cells that were active'
-        for seg in self.segmentsNear:
-            if seg.active:
+        if nextStep:
+            segments = self.segmentsNear
+        else:
+            segments = self.segments
+            
+        for seg in segments:
+            if seg.wasActive:
                 return seg
             
     def bestMatchingSegment(self, nextStep):
         '''
-        For this cell, find the segment with the largest 
-        number of active synapses. This routine is aggressive in finding the best 
+        For this cell, find the segment with the largest number of 
+        previously active synapses. This routine is aggressive in finding the best 
         match. The permanence value of synapses is allowed to be below 
         connectedPerm. The number of active synapses is allowed to be below 
-        activationThreshold, but must be above minThreshold. The routine 
+        activationThreshold, but must be at or above minThreshold. The routine 
         returns the segment index. If no segments are found, then None is 
         returned. 
         @param nextStep: should the segment be of the nextStep type, or all-time prediction?
@@ -162,7 +168,7 @@ class Cell(object):
         bestSegment = None
         bestSegmentSynapseCount = MIN_THRESHOLD-1
         for seg in filter(lambda seg: seg.nextStep == nextStep, self.segments):
-            synapseCount = len(seg.synapses_firing(requireConnection=False))
+            synapseCount = len(seg.old_firing_synapses(requireConnection=False))
             if synapseCount > bestSegmentSynapseCount:
                 bestSegmentSynapseCount = synapseCount
                 bestSegment = seg
