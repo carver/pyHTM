@@ -64,15 +64,21 @@ class Segment(object):
         Timing note: a synapse is considered active if the cell it came from
         was active in the previous step
         '''
-        firing = len(self.synapses_firing())
         total = len(self.synapses)
+        if not total:
+            return False
+        
+        firing = len(self.synapses_firing())
         return float(firing)/total >= FRACTION_SEGMENT_ACTIVATION_THRESHOLD
     
     @property
     def activeFromLearningCells(self):
+        total = len(self.synapses)
+        if not total:
+            return False
+        
         learningSynapses = filter(lambda synapse: synapse.is_firing() and synapse.isInputLearning, 
             self.synapses)
-        total = len(self.synapses)
         return float(learningSynapses)/total >= FRACTION_SEGMENT_ACTIVATION_THRESHOLD
     
     def __str__(self):

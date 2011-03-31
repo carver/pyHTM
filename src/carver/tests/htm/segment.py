@@ -55,8 +55,8 @@ class TestSegment(unittest.TestCase):
         seg = Segment()
         
         #for now, just don't crash
-        seg.adapt_up()
-        seg.adapt_down()
+        seg.adapt_up([])
+        seg.adapt_down([])
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testInit']
