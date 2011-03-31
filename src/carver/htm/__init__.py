@@ -177,7 +177,7 @@ class HTM(object):
                     if segment.active:
                         cell.predictingNext = True
                     
-                if cell.predictingNext and not cell.active:
+                if cell.predictedNext and not cell.active:
                     #penalize only active near segments
                     otherSynapseStates = []
                     for synapses in self._updateSegments[cell]:
@@ -267,8 +267,12 @@ class UpdateSegments(DictDefault):
     def __init__(self):
         DictDefault.__init__(self, newValueFunc=list)
         
-    def add(self, cell, segment):
-        states = SynapseState.captureSegmentState(segment)
+    def add(self, cell, segment, timeDelta=0):
+        '''
+        @param timeDelta: when capturing state, do you capture current or previous state?
+            current = 0; previous = -1
+        '''
+        states = SynapseState.captureSegmentState(segment, timeDelta)
         self[cell].append(states)
         
     def reset(self, cell):

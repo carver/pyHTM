@@ -24,16 +24,16 @@ class TestColumn(unittest.TestCase):
     def testSynapsesFiring(self):
         col = self.col
         
-        firing = Mock({'is_firing':True})
-        off = Mock({'is_firing':False})
-        for i in xrange(4): #@UnusedVariable
+        firing = Mock({'was_firing':True})
+        off = Mock({'was_firing':False})
+        for _ in xrange(4):
             col.segment.add_synapse(firing)
             
-        self.assertEqual(4, len(col.synapses_firing()))
+        self.assertEqual(4, len(col.old_firing_synapses()))
         col.segment.add_synapse(off)
-        self.assertEqual(4, len(col.synapses_firing()))
+        self.assertEqual(4, len(col.old_firing_synapses()))
         col.segment.add_synapse(firing)
-        self.assertEqual(5, len(col.synapses_firing()))
+        self.assertEqual(5, len(col.old_firing_synapses()))
         
     def testBestCell(self):
         #trivial case (no synapses explicitly set on any cells):

@@ -47,7 +47,7 @@ def _spatial_overlap(htm):
     'Overlap, p 35'
     
     for col in htm.columns:
-        col.overlap = len(col.synapses_firing())
+        col.overlap = len(col.old_firing_synapses())
             
         #The paper has conflicting information in the following lines.
         #The text implies boost before cutoff, the code: cutoff then boost. I 
@@ -77,7 +77,7 @@ def _spatial_learning(htm, activeColumns):
     'Learning, p 36'
     for col in activeColumns:
         for s in col.synapses:
-            if s.is_firing():
+            if s.was_firing():
                 s.permanence_increment()
             else:
                 s.permanence_decrement()
@@ -106,7 +106,7 @@ def _temporal_phase1(htm, learning, updateSegments):
         learningCellChosen = False
         for cell in col.cells:
             if cell.predicted:
-                seg = cell.activeSegmentNear()
+                seg = cell.findSegmentWasActive(nextStep=True)
                 
                 #distal dendrite segments = sequence memory
                 if seg and seg.distal:
@@ -114,7 +114,7 @@ def _temporal_phase1(htm, learning, updateSegments):
                     cell.active = True
                     
                     #Learning Phase 1, p 41
-                    if learning and seg.activeFromLearningCells:
+                    if learning and seg.wasActiveFromLearningCells:
                         learningCellChosen = True
                         cell.learning = True
                     
@@ -130,7 +130,7 @@ def _temporal_phase1(htm, learning, updateSegments):
             if seg is None:
                 seg = cell.create_segment(htm, nextStep=True)
                 
-            updateSegments.add(cell, seg)
+            updateSegments.add(cell, seg, timeDelta=-1)
             
     return updateSegments
             
@@ -142,7 +142,7 @@ def _temporal_phase2(htm, updateSegments, learning):
                 cell.predicting = True
                 
                 if learning:
-                    updateSegments.add(cell, seg)
+                    updateSegments.add(cell, seg, timeDelta=0)
             
         #for each cell, grab the best segment. right now, this does not prevent 
         #duplication of learning on the best segment
@@ -153,7 +153,7 @@ def _temporal_phase2(htm, updateSegments, learning):
                 
             bestSeg.round_out_synapses(htm)
             
-            updateSegments.add(cell, bestSeg)
+            updateSegments.add(cell, bestSeg, timeDelta=-1)
     
     return updateSegments
 

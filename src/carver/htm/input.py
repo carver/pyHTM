@@ -28,6 +28,10 @@ class InputCell(object):
         self.overrideInput = False
         self.stimulationPast = 0
         
+        #this should not be called in normal circumstances and is preventing 
+        #    an attribute exception when synapse calls it for display purposes
+        self.active = False
+        
     def resetStimulation(self):
         self.stimulation = 0.0
         

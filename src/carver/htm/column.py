@@ -40,8 +40,8 @@ class Column(object):
         self.dutyCycleOverlap = 0
         self.active = False
         
-    def synapses_firing(self):
-        return self.segment.synapses_firing()
+    def old_firing_synapses(self):
+        return self.segment.old_firing_synapses()
     
     def increase_permanences(self, byAmount):
         return self.segment.increase_permanences(byAmount)
@@ -87,7 +87,7 @@ class Column(object):
         #find cell with best best matching segment
         for cell in self.cells:
             seg = cell.bestMatchingSegment(nextStep)
-            numSynapses = len(seg.synapses_firing(requireConnection=False)) if seg else 0
+            numSynapses = len(seg.old_firing_synapses(requireConnection=False)) if seg else 0
             if numSynapses > bestCellFiringSynapseCount:
                 bestCellFiringSynapseCount = numSynapses
                 bestCell = cell
@@ -159,7 +159,7 @@ class Column(object):
         '''
         for cell in self.cells:
             for seg in cell.segmentsNear:
-                if seg.activeNext:
+                if seg.active:
                     return True
         return False
     

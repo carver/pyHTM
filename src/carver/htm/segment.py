@@ -39,24 +39,24 @@ class Segment(object):
         self.synapses.append(syn)
         return syn
         
+    def old_firing_synapses(self, requireConnection=True):
+        '''
+        @param requireConnection: only include synapse if the synapse is connected
+        @return an iterable of firing synapses
+        '''
+        return filter(lambda synapse: synapse.was_firing(requireConnection=requireConnection), 
+            self.synapses)
+        
+    @classmethod
+    def _is_firing_filter(cls, requireConnection=True):
+        return lambda synapse: synapse.is_firing(requireConnection=requireConnection)
+        
     def synapses_firing(self, requireConnection=True):
         '''
         @param requireConnection: only include synapse if the synapse is connected
         @return an iterable of firing synapses
         '''
-        return filter(lambda synapse: synapse.is_firing(requireConnection=requireConnection), 
-            self.synapses)
-        
-    @classmethod
-    def _will_fire_next(cls, requireConnection=True):
-        return lambda synapse: synapse.will_fire(requireConnection=requireConnection)
-        
-    def synapses_will_fire(self, requireConnection=True):
-        '''
-        @param requireConnection: only include synapse if the synapse is connected
-        @return an iterable of firing synapses
-        '''
-        return filter(self._will_fire_next(requireConnection),
+        return filter(self._is_firing_filter(requireConnection),
             self.synapses)
     
     def increase_permanences(self, byAmount):
@@ -84,20 +84,22 @@ class Segment(object):
         Timing note: a synapse is considered active if the cell it came from
         was active in the previous step
         '''
-        filterFunc = lambda synapse: synapse.is_firing(requireConnection=True)
+        filterFunc = self._is_firing_filter(requireConnection=True)
         return self._areSynapsesAboveThreshold(filterFunc)
     
     @property
-    def activeNext(self):
+    def wasActive(self):
         '''
-        Will the segment fire? Based on current cell active status
+        Did the segment fire? ie~ did enough synapses fire to reach the activation threshold
+        Timing note: a synapse is considered active if the cell it came from
+        was active in the previous step
         '''
-        filterFunc = self._will_fire_next(requireConnection=True)
+        filterFunc = lambda synapse: synapse.was_firing(requireConnection=True)
         return self._areSynapsesAboveThreshold(filterFunc)
     
     @property
-    def activeFromLearningCells(self):
-        filterFunc = lambda synapse: synapse.is_firing() and synapse.isInputLearning
+    def wasActiveFromLearningCells(self):
+        filterFunc = lambda synapse: synapse.was_firing() and synapse.wasInputLearning
         return self._areSynapsesAboveThreshold(filterFunc)
     
     def __str__(self):
@@ -126,7 +128,7 @@ class Segment(object):
                 
     def round_out_synapses(self, htm):
         'if not enough synapses active, add more synapses up to configured amount'
-        synapses = self.synapses_firing(requireConnection=False)
+        synapses = self.old_firing_synapses(requireConnection=False)
         
         missingSynapses = MAX_NEW_SYNAPSES - len(synapses)
         if missingSynapses > 0:
