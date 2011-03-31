@@ -73,7 +73,7 @@ class Segment(object):
         return len(learningSynapses) >= SEGMENT_ACTIVATION_THRESHOLD
     
     def __str__(self):
-        return 'segment active?%s [%s]' % (self.active, ';'.join(map(str,self.synapses)))
+        return 'segment near?%s active?%s [%s]' % (self.nextStep, self.active, ';'.join(map(str,self.synapses)))
     
     @classmethod
     def adapt_up(cls, synapseStates):
