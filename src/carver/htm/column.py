@@ -79,7 +79,7 @@ class Column(object):
         return self.htm.neighbors(self)
     
     def bestCell(self, nextStep=True):
-        '#see htm doc 0.1.1 pg 45: getBestMatchingCell'
+        '#see htm doc 0.2 pg 45: getBestMatchingCell'
         bestCell = None
         bestCellFiringSynapseCount = 0
         bestSeg = None
@@ -87,7 +87,7 @@ class Column(object):
         #find cell with best best matching segment
         for cell in self.cells:
             seg = cell.bestMatchingSegment(nextStep)
-            if seg and len(seg.synapses_firing()) > bestCellFiringSynapseCount:
+            if seg and len(seg.synapses_firing(requireConnection=False)) > bestCellFiringSynapseCount:
                 bestCellFiringSynapseCount = len(seg.synapses_firing())
                 bestCell = cell
                 bestSeg = seg
