@@ -85,8 +85,44 @@ class TestRecognitionTemporal(unittest.TestCase):
 
     def tearDown(self):
         pass
+    
+    def testToyTemporalSetup(self):
+        data = [
+            [1,0],
+            [0,0],
+            ]
+        h = HTM(cellsPerColumn=3)
+        h.initialize_input(data)
+        
+        rowflip = TranslateInput(data, shift=(1,0))
+        colflip = TranslateInput(data, shift=(0,1))
+        
+        h.execute(rowflip.dataGenerator(), ticks=10)
+        h.execute(rowflip.dataGenerator(), ticks=10)
+        h.execute(colflip.dataGenerator(), ticks=20)
+        
+        def printCellActive(htm):
+            print "cell activity:"
+            for i, col in enumerate(htm.columns):
+                print (
+                    "column %s:" % i,
+                    ' '.join(map(lambda c: '1' if c.active else '0', col.cells))
+                    )
+        
+        h.execute(rowflip.dataGenerator(), ticks=4, learning=False,
+            postTick=printCellActive)
+        
+        #InputCellsDisplay.showNow(h)
+        
+        #imagine next step
+        h._imagineStimulate(h.columns)
+        print "stimulation:"
+        for row in h._inputCells:
+            print ' '.join(map(lambda cell: '%.2f' % cell.stimulation, row))
+        
+        
 
-    def testTemporalImagination(self):
+    def _testTemporalImagination(self):
         h = HTM(cellsPerColumn=3)
         h.initialize_input(self.left_block, compressionFactor=2.8)
         
