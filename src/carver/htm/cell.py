@@ -171,9 +171,8 @@ class Cell(object):
         return bestSegment
     
     def __str__(self):
-        #TODO: show synapses
-        base = "cell: (active,predicting,learning) = now(%s,%s,%s) last(%s,%s,%s)" % (
-            self.active, self.predicting, self.learning, self.wasActive, 
+        base = "cell layer %s in column\n%s\n (active,predicting,learning) = now(%s,%s,%s) last(%s,%s,%s)" % (
+            self.layer, self.column, self.active, self.predicting, self.learning, self.wasActive, 
             self.predicted, self.wasLearning)
         
         segText = [base]
