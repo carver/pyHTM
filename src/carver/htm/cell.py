@@ -171,8 +171,8 @@ class Cell(object):
         return bestSegment
     
     def __str__(self):
-        base = "cell layer %s in column\n%s\n (active,predicting,learning) = now(%s,%s,%s) last(%s,%s,%s)" % (
-            self.layer, self.column, self.active, self.predicting, self.learning, self.wasActive, 
+        base = "cell layer %s in column(%s,%s) (active,predicting,learning) = now(%s,%s,%s) last(%s,%s,%s)" % (
+            self.layer, self.column.x, self.column.y, self.active, self.predicting, self.learning, self.wasActive, 
             self.predicted, self.wasLearning)
         
         segText = [base]
