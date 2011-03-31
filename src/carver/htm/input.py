@@ -22,7 +22,7 @@ class InputCell(object):
         self.predicted = False
         
         #currently used for downstream stimulation ("imagination")
-        self.__resetStimulation()
+        self.resetStimulation()
         self.overrideInput = False
         self.stimulationPast = 0
         
