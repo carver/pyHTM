@@ -107,14 +107,10 @@ class Cell(object):
         synapseLen = self.__createSynapses(seg, htm.cells, SYNAPSES_PER_SEGMENT,
             lambda c: c.wasLearning)
         
-        if synapseLen < SYNAPSES_PER_SEGMENT:
+        if not nextStep and synapseLen < SYNAPSES_PER_SEGMENT:
             addSynapseLen = SYNAPSES_PER_SEGMENT - synapseLen
             activeSynapseLen = self.__createSynapses(seg, htm.cells, addSynapseLen,
                 lambda c: c.wasActive)
-        
-            if activeSynapseLen < SYNAPSES_PER_SEGMENT:
-                addSynapseLen -= activeSynapseLen
-                self.__createSynapses(seg, htm.cells, addSynapseLen, None)
             
         self.segments.append(seg)
         
