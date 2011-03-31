@@ -109,7 +109,7 @@ class TestRecognitionTemporal(unittest.TestCase):
                     ' '.join(map(lambda c: '1' if c.active else '0', col.cells))
                     )
         
-        h.execute(rowflip.dataGenerator(), ticks=4, learning=False,
+        h.execute(rowflip.dataGenerator(), ticks=4, learning=True,
             postTick=printCellActive)
         
         #InputCellsDisplay.showNow(h)
