@@ -47,12 +47,16 @@ class Segment(object):
         return filter(lambda synapse: synapse.is_firing(requireConnection=requireConnection), 
             self.synapses)
         
+    @classmethod
+    def _will_fire_next(cls, requireConnection=True):
+        return lambda synapse: synapse.will_fire(requireConnection=requireConnection)
+        
     def synapses_will_fire(self, requireConnection=True):
         '''
         @param requireConnection: only include synapse if the synapse is connected
         @return an iterable of firing synapses
         '''
-        return filter(lambda synapse: synapse.will_fire(requireConnection=requireConnection), 
+        return filter(self._will_fire_next(requireConnection),
             self.synapses)
     
     def increase_permanences(self, byAmount):
@@ -88,7 +92,8 @@ class Segment(object):
         '''
         Will the segment fire? Based on current cell active status
         '''
-        return len(self.synapses_will_fire()) >= SEGMENT_ACTIVATION_THRESHOLD
+        filterFunc = self._will_fire_next(requireConnection=True)
+        return self._areSynapsesAboveThreshold(filterFunc)
     
     @property
     def activeFromLearningCells(self):
