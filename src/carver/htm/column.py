@@ -102,6 +102,8 @@ class Column(object):
                 if len(cell.segments) < fewestSegments:
                     bestCell = cell
                     fewestSegments = len(cell.segments)
+                    
+            bestSeg = cell.bestMatchingSegment(nextStep)
             
         return (bestCell, bestSeg)
     
