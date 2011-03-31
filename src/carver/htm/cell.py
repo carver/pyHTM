@@ -16,7 +16,7 @@ class Cell(object):
     '''
 
 
-    def __init__(self, column, layer):
+    def __init__(self, column=None, layer=None):
         '''
         @param layer the inner layer of the cell, so an HTM with 3 cells per column
             would have cells with layers 0, 1 and 2
