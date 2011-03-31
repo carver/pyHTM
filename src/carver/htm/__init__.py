@@ -79,6 +79,7 @@ class HTM(object):
             inputWidth, inputLength, self.inputCompression)
         
         if self.width * self.length < 45:
+            #TODO: investigate why the magic number was 45, and how it changes with constants
             logging.warning('Increase the size of your input to at least 45 pixels or reduce your compression.\nDue to the segment activation threshold for prediction, too small a number of inputs prevents the HTM from learning temporal patterns')
         
         self.__wireColumnsToInput(self._data, inputWidth, inputLength)
@@ -86,6 +87,14 @@ class HTM(object):
         #add synapses on sequential/distal dendrites from each cell to cell,
         #which is not based on any known HTM docs
         #Actually, just let the first synapses grow on their own in temporal 1
+        
+    @property
+    def inputWidth(self):
+        return len(self._inputCells)
+        
+    @property
+    def inputLength(self):
+        return len(self._inputCells[0])
         
     def imagineNext(self):
         'project down estimates for next time step to the input cells'
