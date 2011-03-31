@@ -11,8 +11,8 @@ from carver.htm.io.translate_input import TranslateInput
 from PIL import Image
 from carver.htm.io.image_builder import ImageBuilder, InputCellsDisplay,\
     ColumnDisplay, InputReflectionOverlayDisplay
-from carver.htm.segment import SEGMENT_ACTIVATION_THRESHOLD
 from carver.htm.synapse import SYNAPSES_PER_SEGMENT
+from carver.htm.segment import FRACTION_SEGMENT_ACTIVATION_THRESHOLD
 
 class TestRecognitionTemporal(unittest.TestCase):
 
@@ -166,7 +166,7 @@ class TestRecognitionTemporal(unittest.TestCase):
         
         white = (255,255,255)
         black = (0,0,0)
-        percentSynapsesForActivation = 2*float(SEGMENT_ACTIVATION_THRESHOLD)/SYNAPSES_PER_SEGMENT
+        percentSynapsesForActivation = FRACTION_SEGMENT_ACTIVATION_THRESHOLD
         def stimToRGB(stim):
             percentStimulated = stim/maxStim
             triggered = percentStimulated >= percentSynapsesForActivation

@@ -7,9 +7,7 @@ Created on Mar 23, 2011
 from PIL import Image
 from carver.htm import HTM
 from carver.htm.synapse import SYNAPSES_PER_SEGMENT
-from carver.htm.segment import SEGMENT_ACTIVATION_THRESHOLD
-
-percentSynapsesForActivation = float(SEGMENT_ACTIVATION_THRESHOLD)/SYNAPSES_PER_SEGMENT
+from carver.htm.segment import FRACTION_SEGMENT_ACTIVATION_THRESHOLD
 
 class ImageBuilder(object):
     '''
@@ -88,7 +86,7 @@ class InputReflectionOverlayDisplay(HTMDisplayBase):
     def inputOverlay(cls, cellInfo):
         (cell, percentStimulated) = cellInfo
         
-        triggered = percentStimulated >= percentSynapsesForActivation
+        triggered = percentStimulated >= FRACTION_SEGMENT_ACTIVATION_THRESHOLD
             
         if cell.wasActive and triggered: #correct
             return (0,int(percentStimulated*255),0)

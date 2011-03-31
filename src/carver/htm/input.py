@@ -4,7 +4,7 @@ Created on Dec 3, 2010
 @author: Jason Carver
 '''
 from carver.htm.synapse import SYNAPSES_PER_SEGMENT
-from carver.htm.segment import SEGMENT_ACTIVATION_THRESHOLD
+from carver.htm.segment import FRACTION_SEGMENT_ACTIVATION_THRESHOLD
 
 class InputCell(object):
     '''
@@ -48,9 +48,7 @@ class InputCell(object):
     def override(self):
         self.overrideInput = True
         
-        percentSynapsesForActivation = float(SEGMENT_ACTIVATION_THRESHOLD)/SYNAPSES_PER_SEGMENT
-        
-        if self.stimulation >= percentSynapsesForActivation:
+        if self.stimulation >= FRACTION_SEGMENT_ACTIVATION_THRESHOLD:
             self.stimulationPast = 1
         else:
             self.stimulationPast = 0
