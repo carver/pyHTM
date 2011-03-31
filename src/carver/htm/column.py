@@ -28,7 +28,7 @@ class Column(object):
         
         '''
         self.htm = htm
-        self.cells = [Cell() for i in xrange(cellsPerColumn)] #@UnusedVariable
+        self.cells = [Cell(self, i) for i in xrange(cellsPerColumn)]
         self.overlap = 0
         #synapses on input/proximal dendrites, forced equal for whole column, in equivalent of single segment
         self.segment = Segment(distal=False)
@@ -147,6 +147,9 @@ class Column(object):
             if cell.predictedNext:
                 return True
         return False
+    
+    def __hash__(self):
+        return self.x * self.y * hash(self.htm)
     
     def __eq__(self, another):
         if not hasattr(another, 'htm') or not hasattr(another, 'x') or \

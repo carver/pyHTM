@@ -16,10 +16,14 @@ class Cell(object):
     '''
 
 
-    def __init__(self):
+    def __init__(self, column, layer):
         '''
+        @param layer the inner layer of the cell, so an HTM with 3 cells per column
+            would have cells with layers 0, 1 and 2
+        '''
+        self.column = column
+        self.layer = layer
         
-        '''
         self.active = False
         self.__wasActive = False #read-only
         self.predicting = False
@@ -129,7 +133,12 @@ class Cell(object):
         return len(synapseFrom)
     
     def __hash__(self):
-        return 1 #TODO: make hashable
+        return self.layer * hash(self.column)
+    
+    def __eq__(self, other):
+        if not hasattr(other, 'column') or not hasattr(other, 'layer'):
+            return False
+        return self.layer == other.layer and self.column == other.column
     
     def activeSegmentNear(self):
         'prefer distal, return hits from segments connected to other cells that were active'
