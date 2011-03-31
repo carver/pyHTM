@@ -120,7 +120,7 @@ class Cell(object):
         if filterFunc is None:
             filterFunc = lambda cell: True
         
-        alsoFilterSelf = lambda cell: filterFunc(cell) and cell!=self
+        alsoFilterSelf = lambda cell: filterFunc(cell) and self!=cell
         
         matchingCells = filter(alsoFilterSelf, cells)
         sampleSize = min(len(matchingCells), maxSynapses)
