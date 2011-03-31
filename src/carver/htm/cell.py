@@ -16,7 +16,7 @@ class Cell(object):
     '''
 
 
-    def __init__(self, column, layer):
+    def __init__(self, column=None, layer=None):
         '''
         @param layer the inner layer of the cell, so an HTM with 3 cells per column
             would have cells with layers 0, 1 and 2
@@ -120,7 +120,7 @@ class Cell(object):
         if filterFunc is None:
             filterFunc = lambda cell: True
         
-        alsoFilterSelf = lambda cell: filterFunc(cell) and cell!=self
+        alsoFilterSelf = lambda cell: filterFunc(cell) and self!=cell
         
         matchingCells = filter(alsoFilterSelf, cells)
         sampleSize = min(len(matchingCells), maxSynapses)
@@ -138,6 +138,9 @@ class Cell(object):
         if not hasattr(other, 'column') or not hasattr(other, 'layer'):
             return False
         return self.layer == other.layer and self.column == other.column
+    
+    def __ne__(self, other):
+        return not (self == other)
     
     def activeSegmentNear(self):
         'prefer distal, return hits from segments connected to other cells that were active'

@@ -21,14 +21,22 @@ class TestColumn(unittest.TestCase):
         pass
 
     def testCreateSegment(self):
-        h = HTM()
-        h.initialize_input([[1,1,1],[1,1,1]])
+        htm = Mock()
+        learning = Mock()
+        learning.wasLearning = True
+        active = Mock()
+        active.wasLearning = False
+        active.wasActive = True
+        htm.cells = [learning, active, active]
         cell = Cell()
+        
+        self.assertNotEqual(cell, learning)
+        
         startingSegments = config.getint('init','segments_per_cell')
         self.assertEqual(startingSegments, len(cell.segments))
-        cell.create_segment(h, nextStep=False)
+        cell.create_segment(htm, nextStep=False)
         self.assertEqual(startingSegments+1, len(cell.segments))
-        cell.create_segment(h, nextStep=True)
+        cell.create_segment(htm, nextStep=True)
         self.assertEqual(startingSegments+2, len(cell.segments))
         
         #make sure newly created segment has the right number of synapses
