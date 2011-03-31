@@ -29,6 +29,9 @@ class TestColumn(unittest.TestCase):
         active.wasActive = True
         htm.cells = [learning, active, active]
         cell = Cell()
+        
+        self.assertNotEqual(cell, learning)
+        
         startingSegments = config.getint('init','segments_per_cell')
         self.assertEqual(startingSegments, len(cell.segments))
         cell.create_segment(htm, nextStep=False)

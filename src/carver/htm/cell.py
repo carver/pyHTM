@@ -139,6 +139,9 @@ class Cell(object):
             return False
         return self.layer == other.layer and self.column == other.column
     
+    def __ne__(self, other):
+        return not (self == other)
+    
     def activeSegmentNear(self):
         'prefer distal, return hits from segments connected to other cells that were active'
         for seg in self.segmentsNear:
