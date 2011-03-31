@@ -165,7 +165,7 @@ class HTM(object):
                 
         pool_spatial(self)
         
-        self._updateSegments = pool_temporal(self, self._updateSegments, learning=True)
+        self._updateSegments = pool_temporal(self, self._updateSegments, learning=learning)
         
         #non-Numenta optimization:
         #track whether cell is predicted next
