@@ -87,8 +87,9 @@ class Column(object):
         #find cell with best best matching segment
         for cell in self.cells:
             seg = cell.bestMatchingSegment(nextStep)
-            if seg and len(seg.synapses_firing(requireConnection=False)) > bestCellFiringSynapseCount:
-                bestCellFiringSynapseCount = len(seg.synapses_firing())
+            numSynapses = len(seg.synapses_firing(requireConnection=False))
+            if seg and numSynapses > bestCellFiringSynapseCount:
+                bestCellFiringSynapseCount = numSynapses
                 bestCell = cell
                 bestSeg = seg
             
