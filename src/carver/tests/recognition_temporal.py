@@ -88,7 +88,7 @@ class TestRecognitionTemporal(unittest.TestCase):
 
     def testTemporalImagination(self):
         h = HTM(cellsPerColumn=3)
-        h.initialize_input(self.left_block)
+        h.initialize_input(self.left_block, compressionFactor=2.8)
         
         #show a whole left->right pass, 5 times
         steps = 14*5
