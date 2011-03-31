@@ -16,10 +16,14 @@ class Cell(object):
     '''
 
 
-    def __init__(self):
+    def __init__(self, column, layer):
         '''
+        @param layer the inner layer of the cell, so an HTM with 3 cells per column
+            would have cells with layers 0, 1 and 2
+        '''
+        self.column = column
+        self.layer = layer
         
-        '''
         self.active = False
         self.__wasActive = False #read-only
         self.predicting = False
@@ -99,7 +103,7 @@ class Cell(object):
         '''
         seg = Segment(nextStep=nextStep)
         
-        #randomly choose input cells, from 
+        #randomly choose input cells, from active non-self cells
         synapseLen = self.__createSynapses(seg, htm.cells, SYNAPSES_PER_SEGMENT,
             lambda c: c.wasLearning)
         
@@ -117,7 +121,9 @@ class Cell(object):
         return seg
     
     def __createSynapses(self, segment, cells, maxSynapses, filterFunc):
-        matchingCells = filter(filterFunc, cells)
+        alsoFilterSelf = lambda cell: filterFunc(cell) and cell!=self
+        
+        matchingCells = filter(alsoFilterSelf, cells)
         sampleSize = min(len(matchingCells), maxSynapses)
         synapseFrom = random.sample(matchingCells, sampleSize)
         
@@ -127,7 +133,12 @@ class Cell(object):
         return len(synapseFrom)
     
     def __hash__(self):
-        return 1 #TODO: make hashable
+        return self.layer * hash(self.column)
+    
+    def __eq__(self, other):
+        if not hasattr(other, 'column') or not hasattr(other, 'layer'):
+            return False
+        return self.layer == other.layer and self.column == other.column
     
     def activeSegmentNear(self):
         'prefer distal, return hits from segments connected to other cells that were active'
