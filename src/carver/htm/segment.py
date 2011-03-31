@@ -8,7 +8,7 @@ from carver.htm.synapse import Synapse
 import random
 
 #how many synapses need to fire to trigger a segment fire
-SEGMENT_ACTIVATION_THRESHOLD = config.getint('constants','synapses_per_segment_threshold')
+FRACTION_SEGMENT_ACTIVATION_THRESHOLD = float(config.getint('constants','percent_synapses_per_segment_threshold'))/100
 MAX_NEW_SYNAPSES = config.getint('constants','max_new_synapses')
 
 class Segment(object):
@@ -64,13 +64,16 @@ class Segment(object):
         Timing note: a synapse is considered active if the cell it came from
         was active in the previous step
         '''
-        return len(self.synapses_firing()) >= SEGMENT_ACTIVATION_THRESHOLD
+        firing = len(self.synapses_firing())
+        total = len(self.synapses)
+        return float(firing)/total >= FRACTION_SEGMENT_ACTIVATION_THRESHOLD
     
     @property
     def activeFromLearningCells(self):
         learningSynapses = filter(lambda synapse: synapse.is_firing() and synapse.isInputLearning, 
             self.synapses)
-        return len(learningSynapses) >= SEGMENT_ACTIVATION_THRESHOLD
+        total = len(self.synapses)
+        return float(learningSynapses)/total >= FRACTION_SEGMENT_ACTIVATION_THRESHOLD
     
     def __str__(self):
         return 'segment near?%s active?%s [%s]' % (self.nextStep, self.active, ';'.join(map(str,self.synapses)))
