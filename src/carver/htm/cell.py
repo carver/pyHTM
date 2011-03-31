@@ -160,7 +160,7 @@ class Cell(object):
         @param nextStep: should the segment be of the nextStep type, or all-time prediction?
         '''
         bestSegment = None
-        bestSegmentSynapseCount = MIN_THRESHOLD
+        bestSegmentSynapseCount = MIN_THRESHOLD-1
         for seg in filter(lambda seg: seg.nextStep == nextStep, self.segments):
             synapseCount = len(seg.synapses_firing(requireConnection=False))
             if synapseCount > bestSegmentSynapseCount:
