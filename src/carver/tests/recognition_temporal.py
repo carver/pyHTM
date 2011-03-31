@@ -130,7 +130,7 @@ class TestRecognitionTemporal(unittest.TestCase):
         
         white = (255,255,255)
         black = (0,0,0)
-        percentSynapsesForActivation = float(SEGMENT_ACTIVATION_THRESHOLD)/SYNAPSES_PER_SEGMENT
+        percentSynapsesForActivation = 2*float(SEGMENT_ACTIVATION_THRESHOLD)/SYNAPSES_PER_SEGMENT
         def stimToRGB(stim):
             percentStimulated = stim/maxStim
             triggered = percentStimulated >= percentSynapsesForActivation
