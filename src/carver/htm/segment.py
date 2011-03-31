@@ -65,6 +65,14 @@ class Segment(object):
         'return a list of all synapses whose permanence is above the connection threshold'
         return filter(lambda synapse: synapse.connected, self.synapses)
     
+    def _areSynapsesAboveThreshold(self, filterFunc):
+        total = len(self.synapses)
+        if not total:
+            return False
+        
+        relevantSynapses = filter(filterFunc, self.synapses)
+        return float(len(relevantSynapses))/total >= FRACTION_SEGMENT_ACTIVATION_THRESHOLD
+    
     @property
     def active(self):
         '''
@@ -72,12 +80,8 @@ class Segment(object):
         Timing note: a synapse is considered active if the cell it came from
         was active in the previous step
         '''
-        total = len(self.synapses)
-        if not total:
-            return False
-        
-        firing = len(self.synapses_firing())
-        return float(firing)/total >= FRACTION_SEGMENT_ACTIVATION_THRESHOLD
+        filterFunc = lambda synapse: synapse.is_firing(requireConnection=True)
+        return self._areSynapsesAboveThreshold(filterFunc)
     
     @property
     def activeNext(self):
@@ -88,13 +92,8 @@ class Segment(object):
     
     @property
     def activeFromLearningCells(self):
-        total = len(self.synapses)
-        if not total:
-            return False
-        
-        learningSynapses = filter(lambda synapse: synapse.is_firing() and synapse.isInputLearning, 
-            self.synapses)
-        return float(len(learningSynapses))/total >= FRACTION_SEGMENT_ACTIVATION_THRESHOLD
+        filterFunc = lambda synapse: synapse.is_firing() and synapse.isInputLearning
+        return self._areSynapsesAboveThreshold(filterFunc)
     
     def __str__(self):
         return 'segment near?%s active?%s [%s]' % (self.nextStep, self.active, ';'.join(map(str,self.synapses)))
