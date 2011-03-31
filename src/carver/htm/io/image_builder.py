@@ -103,7 +103,7 @@ class InputReflectionOverlayDisplay(HTMDisplayBase):
     
 class InputCellsDisplay(HTMDisplayBase):
     def __init__(self, htm):
-        self.imageBuilder = ImageBuilder((htm.width, htm.length), self.cellActiveBW)
+        self.imageBuilder = ImageBuilder((htm.inputWidth, htm.inputLength), self.cellActiveBW)
         data = [cell for row in htm._inputCells for cell in row]
         self.imageBuilder.setData(data)
         

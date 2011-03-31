@@ -139,7 +139,7 @@ class TestRecognitionTemporal(unittest.TestCase):
             blue = 255 if triggered else 0
             return (red, green, blue)
         
-        img = ImageBuilder([h.width, h.length], stimToRGB)
+        img = ImageBuilder([h.inputWidth, h.inputLength], stimToRGB)
         img.setData(allStimulation)
         img.show()
         
