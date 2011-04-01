@@ -111,8 +111,18 @@ class TestRecognitionTemporal(unittest.TestCase):
                     ' '.join(map(lambda c: '1' if c.active else '0', col.cells))
                     )
         
-        h.execute(rowflip.dataGenerator(), ticks=4, learning=True,
-            postTick=printCellActive)
+        h.execute(rowflip.dataGenerator(), ticks=6, learning=True,
+            #postTick=printCellActive
+            )
+        
+        for _ in xrange(4):
+            h.imagineNext()
+            #InputReflectionOverlayDisplay.showNow(h)
+            
+        #check that the right cell is active
+        active = filter(lambda i:i.wasActive, [i for row in h._inputCells for i in row])
+        self.assertEqual(1, len(active))
+        self.assertEqual(0, active[0].x+active[0].y)
         
         #InputCellsDisplay.showNow(h)
         
