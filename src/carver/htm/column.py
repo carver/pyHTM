@@ -132,7 +132,7 @@ class Column(object):
         
         Numenta docs: Given the list of columns, return the kth highest overlap value
         '''
-        allNeighbors = sorted(self.neighbors, key=lambda col: col.overlap)
+        allNeighbors = sorted(self.neighbors, reverse=True, key=lambda col: col.overlap)
         index = min(k-1,len(allNeighbors)-1)
         return allNeighbors[index]
     
