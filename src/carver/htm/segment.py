@@ -133,6 +133,7 @@ class Segment(object):
         missingSynapses = MAX_NEW_SYNAPSES - len(synapses)
         if missingSynapses > 0:
             lastLearningCells = filter(lambda cell: cell.wasLearning, htm.cells)
-            for _ in xrange(missingSynapses):
-                cell = random.choice(lastLearningCells)
-                self.create_synapse(cell)
+            if len(lastLearningCells):
+                for _ in xrange(missingSynapses):
+                    cell = random.choice(lastLearningCells)
+                    self.create_synapse(cell)
