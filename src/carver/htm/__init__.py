@@ -113,11 +113,11 @@ class HTM(object):
     def stimulateFromColumns(cls, columns, columnFilter):
         for col in columns:
             if columnFilter(col):
-                down_scale = len(col.synapsesConnected)
-                activityPerSynapse = float(1) / down_scale
+                permanences = map(lambda syn: syn.permanence, col.synapsesConnected)
+                down_scale = float(sum(permanences))
                 
                 for synapse in col.synapsesConnected:
-                    synapse.input.stimulate(activityPerSynapse)
+                    synapse.input.stimulate(synapse.permanence / down_scale)
     
     @classmethod
     def _imagineStimulate(cls, columns):
