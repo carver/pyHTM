@@ -144,15 +144,25 @@ class Cell(object):
         return not (self == other)
     
     def findSegmentWasActive(self, nextStep=True):
-        'prefer distal, return hits from segments connected to other cells that were active'
+        '''
+        prefer distal (comes for free, all cells have only distal segments)
+        prefer segments where learning cell triggered
+        return hits from segments connected to other cells that were active
+        '''
         if nextStep:
             segments = self.segmentsNear
         else:
             segments = self.segments
             
+        activeSeg = None
+            
         for seg in segments:
             if seg.wasActive:
-                return seg
+                activeSeg = seg
+                if seg.wasActiveFromLearningCells:
+                    return seg
+        
+        return activeSeg
             
     def bestMatchingSegment(self, nextStep):
         '''
