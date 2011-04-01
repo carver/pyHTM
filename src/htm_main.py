@@ -41,7 +41,7 @@ if __name__ == '__main__':
     #track htm's data history with
     history = ExciteHistory()
     
-    htm.execute(flipDataGenerator(htm), ticks=180, postTick=history.update)
+    htm.execute(flipDataGenerator(htm), ticks=50, postTick=history.update)
     
     ## Show image with history grouped by cell
     ActivityOverTimeDisplay.showNow(history.data)
