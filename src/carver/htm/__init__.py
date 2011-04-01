@@ -23,8 +23,15 @@ INPUT_BIAS_STD_DEV = config.getfloat('init','input_bias_std_dev')
 EXTENSION_NEXT_STEP_PENALTY = config.getboolean('extensions', 'next_step_penalty')
 
 class HTM(object):
+    
+    dimensions = 2 #hard-coded for now
+    
     def __init__(self, cellsPerColumn=None):
         self.inhibitionRadius = config.getint('init', 'inhibitionRadius')
+        
+        impliedSparsity = float(config.getint('constants','desiredLocalActivity'))/(self.inhibitionRadius**self.dimensions)
+        self.impliedSparsity = min(impliedSparsity, 1.0)
+        
         if cellsPerColumn:
             self.cellsPerColumn = cellsPerColumn
         else:
@@ -247,7 +254,9 @@ class HTM(object):
         radii = []
         for c in self.columns:
             for syn in c.synapsesConnected:
-                radii.append(((c.x-syn.input.x)**2 + (c.y-syn.input.y)**2)**0.5)
+                radius = ((c.x-syn.input.x)**2 + (c.y-syn.input.y)**2)**0.5
+                if radius!=0:
+                    radii.append(radius)
         return sum(radii)/len(radii)
     
     @classmethod
