@@ -117,12 +117,12 @@ class TestRecognitionTemporal(unittest.TestCase):
         
         for _ in xrange(4):
             h.imagineNext()
-            #InputReflectionOverlayDisplay.showNow(h)
+#            InputReflectionOverlayDisplay.showNow(h)
             
         #check that the right cell is active
         active = filter(lambda i:i.wasActive, [i for row in h._inputCells for i in row])
-        self.assertEqual(1, len(active))
-        self.assertEqual(0, active[0].x+active[0].y)
+        
+        ActivityOverTimeDisplay.showNow(history.data)
         
         #InputCellsDisplay.showNow(h)
         
@@ -132,36 +132,46 @@ class TestRecognitionTemporal(unittest.TestCase):
         for row in h._inputCells:
             print ' '.join(map(lambda cell: '%.2f' % cell.stimulation, row))
         
-        ActivityOverTimeDisplay.showNow(history.data)
+        self.assertEqual(1, len(active))
+        self.assertEqual(0, active[0].x+active[0].y)
         
         self.assertGreater(len(filter(lambda c: c.active, h.cells)), 0)
         self.assertLess(len(filter(lambda c: c.active, h.cells)), 3)
 
-    def _testTemporalImagination(self):
+    def testTemporalImagination(self):
         h = HTM(cellsPerColumn=3)
-        h.initialize_input(self.left_block, compressionFactor=2.8)
+        h.initialize_input(self.left_block, 
+#            compressionFactor=2
+            )
+        
+        history = ExciteHistory()
         
         #show a whole left->right pass, 5 times
-        steps = 14*5
-        goright = TranslateInput(self.left_block, shift=(0,1))
-        h.execute(goright.dataGenerator(), ticks=steps-1)
+        steps = 14*10
         
-        #show a whole right->left pass, 5 times
-        goleft = TranslateInput(self.right_block, shift=(0,-1))
-        h.execute(goleft.dataGenerator(), ticks=steps-1)
-        
-        #show a whole top->bottom pass, 5 times
-        godown = TranslateInput(self.top_block, shift=(1,0))
-        h.execute(godown.dataGenerator(), ticks=steps-1)
-        
-        #show a whole bottom->top pass, 5 times
-        goup = TranslateInput(self.bottom_block, shift=(-1,0))
-        h.execute(goup.dataGenerator(), ticks=steps-1)
+        for _ in xrange(2):
+            goright = TranslateInput(self.left_block, shift=(0,1))
+            h.execute(goright.dataGenerator(), ticks=steps-1, postTick=history.update)
+            
+            #show a whole right->left pass, 5 times
+            goleft = TranslateInput(self.right_block, shift=(0,-1))
+            h.execute(goleft.dataGenerator(), ticks=steps-1, postTick=history.update)
+            
+            #show a whole top->bottom pass, 5 times
+            godown = TranslateInput(self.top_block, shift=(1,0))
+            h.execute(godown.dataGenerator(), ticks=steps-1, postTick=history.update)
+            
+            #show a whole bottom->top pass, 5 times
+            goup = TranslateInput(self.bottom_block, shift=(-1,0))
+            h.execute(goup.dataGenerator(), ticks=steps-1, postTick=history.update)
         
         #TODO: test imagination automatically
         
+        #go one whole loop to give it a chance to figure out what's going on
+        h.execute(goright.dataGenerator(), ticks=14*10-1, postTick=history.update)
+        
         #do three steps of block starting left and moving right
-        h.execute(dataGenerator=goright.dataGenerator(), ticks=3, 
+        h.execute(dataGenerator=goright.dataGenerator(), ticks=4, 
             learning=False, postTick=InputReflectionOverlayDisplay.showNow)
         #the displays here should be mostly green and black, but a bit of purple and red is ok
         
@@ -170,8 +180,12 @@ class TestRecognitionTemporal(unittest.TestCase):
         #imagine 9 more steps
 #        for _ in xrange(9):
 #            h.imagineNext()
-#            
-#        InputCellsDisplay.showNow(h)
+#            InputReflectionOverlayDisplay.showNow(h)
+#            history.update(h)
+            
+        InputCellsDisplay.showNow(h)
+        
+        ActivityOverTimeDisplay.showNow(history.data)
             
         #downstream the last step to project back into the input,
         #see if you have a block that is on the right side
@@ -185,7 +199,7 @@ class TestRecognitionTemporal(unittest.TestCase):
         def stimToRGB(stim):
             percentStimulated = stim/maxStim if maxStim else 0
             triggered = percentStimulated >= percentSynapsesForActivation
-            red =  255 if triggered else 0
+            red =  0
             green = int(percentStimulated*255)
             blue = 255 if triggered else 0
             return (red, green, blue)
