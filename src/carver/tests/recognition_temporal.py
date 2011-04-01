@@ -10,7 +10,7 @@ from carver.htm.io.objectrecognize import ObjectRecognize
 from carver.htm.io.translate_input import TranslateInput
 from PIL import Image
 from carver.htm.io.image_builder import ImageBuilder, InputCellsDisplay,\
-    ColumnDisplay, InputReflectionOverlayDisplay
+    ColumnDisplay, InputReflectionOverlayDisplay, ActivityOverTimeDisplay
 from carver.htm.synapse import SYNAPSES_PER_SEGMENT
 from carver.htm.segment import FRACTION_SEGMENT_ACTIVATION_THRESHOLD
 
@@ -97,9 +97,11 @@ class TestRecognitionTemporal(unittest.TestCase):
         rowflip = TranslateInput(data, shift=(1,0))
         colflip = TranslateInput(data, shift=(0,1))
         
-        h.execute(rowflip.dataGenerator(), ticks=10)
-        h.execute(rowflip.dataGenerator(), ticks=10)
-        h.execute(colflip.dataGenerator(), ticks=20)
+        history = ExciteHistory()
+        h.execute(rowflip.dataGenerator(), ticks=20, postTick=history.update)
+        h.execute(colflip.dataGenerator(), ticks=20, postTick=history.update)
+        h.execute(rowflip.dataGenerator(), ticks=20, postTick=history.update)
+        h.execute(colflip.dataGenerator(), ticks=20, postTick=history.update)
         
         def printCellActive(htm):
             print "cell activity:"
@@ -120,7 +122,7 @@ class TestRecognitionTemporal(unittest.TestCase):
         for row in h._inputCells:
             print ' '.join(map(lambda cell: '%.2f' % cell.stimulation, row))
         
-        
+        ActivityOverTimeDisplay.showNow(history.data)
 
     def _testTemporalImagination(self):
         h = HTM(cellsPerColumn=3)
@@ -168,7 +170,7 @@ class TestRecognitionTemporal(unittest.TestCase):
         black = (0,0,0)
         percentSynapsesForActivation = FRACTION_SEGMENT_ACTIVATION_THRESHOLD
         def stimToRGB(stim):
-            percentStimulated = stim/maxStim
+            percentStimulated = stim/maxStim if maxStim else 0
             triggered = percentStimulated >= percentSynapsesForActivation
             red =  255 if triggered else 0
             green = int(percentStimulated*255)

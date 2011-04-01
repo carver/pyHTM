@@ -167,7 +167,12 @@ class Cell(object):
         '''
         bestSegment = None
         bestSegmentSynapseCount = MIN_THRESHOLD-1
-        for seg in filter(lambda seg: seg.nextStep == nextStep, self.segments):
+        
+        segments = self.segments
+        if nextStep:
+            segments = self.segmentsNear
+        
+        for seg in segments:
             synapseCount = len(seg.old_firing_synapses(requireConnection=False))
             if synapseCount > bestSegmentSynapseCount:
                 bestSegmentSynapseCount = synapseCount
