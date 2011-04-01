@@ -123,6 +123,9 @@ class TestRecognitionTemporal(unittest.TestCase):
             print ' '.join(map(lambda cell: '%.2f' % cell.stimulation, row))
         
         ActivityOverTimeDisplay.showNow(history.data)
+        
+        self.assertGreater(len(filter(lambda c: c.active, h.cells)), 0)
+        self.assertLess(len(filter(lambda c: c.active, h.cells)), 3)
 
     def _testTemporalImagination(self):
         h = HTM(cellsPerColumn=3)
