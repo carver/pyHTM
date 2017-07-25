@@ -127,13 +127,17 @@ class Column(object):
         '''
         return max((c.dutyCycleActive for c in self.neighbors))
     
+    def __adjustKthNeighborForSparsity(self, numNeighbors):
+        return max(int(self.htm.impliedSparsity*numNeighbors), 1)
+    
     def kth_neighbor(self, k):
         '''
         
         Numenta docs: Given the list of columns, return the kth highest overlap value
         '''
         allNeighbors = sorted(self.neighbors, reverse=True, key=lambda col: col.overlap)
-        index = min(k-1,len(allNeighbors)-1)
+        sparserK = self.__adjustKthNeighborForSparsity(len(allNeighbors))
+        index = min(k-1, sparserK-1)
         return allNeighbors[index]
     
     @property
@@ -149,6 +153,18 @@ class Column(object):
         for cell in self.cells:
             if cell.predictedNext:
                 return True
+        return False
+    
+    @property
+    def predictingNext(self):
+        '''
+        is this column expected to get excited next?
+        @requires: cells' active state is already set
+        '''
+        for cell in self.cells:
+            for seg in cell.segmentsNear:
+                if seg.active:
+                    return True
         return False
     
     def __hash__(self):

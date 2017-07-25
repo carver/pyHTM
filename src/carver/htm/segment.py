@@ -46,6 +46,18 @@ class Segment(object):
         '''
         return filter(lambda synapse: synapse.was_firing(requireConnection=requireConnection), 
             self.synapses)
+        
+    @classmethod
+    def _is_firing_filter(cls, requireConnection=True):
+        return lambda synapse: synapse.is_firing(requireConnection=requireConnection)
+        
+    def synapses_firing(self, requireConnection=True):
+        '''
+        @param requireConnection: only include synapse if the synapse is connected
+        @return an iterable of firing synapses
+        '''
+        return filter(self._is_firing_filter(requireConnection),
+            self.synapses)
     
     def increase_permanences(self, byAmount):
         'increase permanence on all synapses'
@@ -72,7 +84,7 @@ class Segment(object):
         Timing note: a synapse is considered active if the cell it came from
         was active in the previous step
         '''
-        filterFunc = lambda synapse: synapse.is_firing(requireConnection=True)
+        filterFunc = self._is_firing_filter(requireConnection=True)
         return self._areSynapsesAboveThreshold(filterFunc)
     
     @property
@@ -121,6 +133,7 @@ class Segment(object):
         missingSynapses = MAX_NEW_SYNAPSES - len(synapses)
         if missingSynapses > 0:
             lastLearningCells = filter(lambda cell: cell.wasLearning, htm.cells)
-            for _ in xrange(missingSynapses):
-                cell = random.choice(lastLearningCells)
-                self.create_synapse(cell)
+            if len(lastLearningCells):
+                for _ in xrange(missingSynapses):
+                    cell = random.choice(lastLearningCells)
+                    self.create_synapse(cell)

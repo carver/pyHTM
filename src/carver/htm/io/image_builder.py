@@ -5,6 +5,10 @@ Created on Mar 23, 2011
 '''
 
 from PIL import Image
+from carver.htm import HTM
+from carver.htm.synapse import SYNAPSES_PER_SEGMENT
+from carver.htm.segment import FRACTION_SEGMENT_ACTIVATION_THRESHOLD
+from carver.htm.ui.excite_history import ExciteHistory
 
 class ImageBuilder(object):
     '''
@@ -35,36 +39,100 @@ class ImageBuilder(object):
     def show(self):
         return self.img.show()
     
-class ColumnDisplay(object):
+class HTMDisplayBase(object):
+        
+    def show(self):
+        return self.imageBuilder.show()
+        
+    @classmethod
+    def showNow(cls, htm):
+        cls(htm).show()
+
+class ActivityOverTimeDisplay(HTMDisplayBase):
+    def __init__(self, columnStates):
+        img = ImageBuilder([len(columnStates[0]), len(columnStates)], self.stateToRGB)
+        img.setData2D(columnStates)
+        img.rotate90()
+        self.imageBuilder = img
+        
+    def show(self):
+        print """*************** Graph History **************
+Y-Axis: All cells in the network, with the 4 cells per column grouped together
+X-Axis: Time
+Colors:
+\tblack: no activity
+\tgray: predicting
+\twhite: active  
+"""
+        HTMDisplayBase.show(self)
+        
+    @classmethod
+    def stateToRGB(cls, state):
+        if state == ExciteHistory.ACTIVE:
+            return (255, 255, 255)
+        elif state == ExciteHistory.PREDICTING:
+            return (127, 127, 127)
+        elif state == ExciteHistory.INACTIVE:
+            return (0, 0, 0)
+        else:
+            return (255, 0, 0) #unknown cell/column state
+    
+class ColumnDisplay(HTMDisplayBase):
     def __init__(self, htm):
         width = len(htm._column_grid)
         length = len(htm._column_grid[0])
         self.imageBuilder = ImageBuilder((width, length), self.colStateColor)
         self.imageBuilder.setData(htm.columns)
         
-    def show(self):
-        return self.imageBuilder.show()
-    
-    @classmethod
-    def showNow(cls, htm):
-        cls(htm).show()
-        
     @classmethod
     def colStateColor(cls, column):
-        if column.active:
+        if column.active and column.predictedNext: #correct
             return (0,255,0)
+        elif column.active: #false negative
+            return (255,0,0)
+        elif column.predictedNext: #false positive
+            return (180,0,180) #purple
         else:
             return (0,0,0)
 
-    
-class InputCellsDisplay(object):
+class InputReflectionOverlayDisplay(HTMDisplayBase):
+    'show the input cells, and the column activation pushed back onto the input space'
     def __init__(self, htm):
-        self.imageBuilder = ImageBuilder((htm.width, htm.length), self.cellActiveBW)
-        data = [cell for row in htm._inputCells for cell in row]
+        self.imageBuilder = ImageBuilder((htm.inputWidth, htm.inputLength), self.inputOverlay)
+        
+        HTM.stimulateFromColumns(htm.columns, lambda col: col.active)
+        HTM.normalize_input_stimulation(htm._inputCells)
+        
+        data = [(cell, cell.stimulation) for row in htm._inputCells for cell in row]
+        
+        for row in htm._inputCells:
+            for cell in row:
+                cell.resetStimulation()
+            
         self.imageBuilder.setData(data)
         
-    def show(self):
-        return self.imageBuilder.show()
+    @classmethod
+    def inputOverlay(cls, cellInfo):
+        (cell, percentStimulated) = cellInfo
+        
+        triggered = percentStimulated >= FRACTION_SEGMENT_ACTIVATION_THRESHOLD
+            
+        if cell.wasActive and triggered: #correct
+            return (0,int(percentStimulated*255),0)
+        elif cell.wasActive: #false negative
+            return (255-int(percentStimulated*255),0,0)
+        elif triggered: #false positive
+            return (int(percentStimulated*180),0,int(percentStimulated*180)) #purple
+        else:
+            gray = int(percentStimulated*255)
+            return (gray,gray,gray)
+        
+    
+class InputCellsDisplay(HTMDisplayBase):
+    def __init__(self, htm):
+        self.imageBuilder = ImageBuilder((htm.inputWidth, htm.inputLength), self.cellActiveBW)
+        data = [cell for row in htm._inputCells for cell in row]
+        self.imageBuilder.setData(data)
         
     @classmethod
     def cellActiveBW(cls, cell):

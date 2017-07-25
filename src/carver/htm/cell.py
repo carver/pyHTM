@@ -144,15 +144,25 @@ class Cell(object):
         return not (self == other)
     
     def findSegmentWasActive(self, nextStep=True):
-        'prefer distal, return hits from segments connected to other cells that were active'
+        '''
+        prefer distal (comes for free, all cells have only distal segments)
+        prefer segments where learning cell triggered
+        return hits from segments connected to other cells that were active
+        '''
         if nextStep:
             segments = self.segmentsNear
         else:
             segments = self.segments
             
+        activeSeg = None
+            
         for seg in segments:
             if seg.wasActive:
-                return seg
+                activeSeg = seg
+                if seg.wasActiveFromLearningCells:
+                    return seg
+        
+        return activeSeg
             
     def bestMatchingSegment(self, nextStep):
         '''
@@ -167,7 +177,12 @@ class Cell(object):
         '''
         bestSegment = None
         bestSegmentSynapseCount = MIN_THRESHOLD-1
-        for seg in filter(lambda seg: seg.nextStep == nextStep, self.segments):
+        
+        segments = self.segments
+        if nextStep:
+            segments = self.segmentsNear
+        
+        for seg in segments:
             synapseCount = len(seg.old_firing_synapses(requireConnection=False))
             if synapseCount > bestSegmentSynapseCount:
                 bestSegmentSynapseCount = synapseCount

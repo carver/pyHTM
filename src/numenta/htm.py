@@ -106,7 +106,7 @@ def _temporal_phase1(htm, learning, updateSegments):
         learningCellChosen = False
         for cell in col.cells:
             if cell.predicted:
-                seg = cell.findSegmentWasActive(nextStep=True)
+                seg = cell.findSegmentWasActive(nextStep=False)
                 
                 #distal dendrite segments = sequence memory
                 if seg and seg.distal:
@@ -124,7 +124,7 @@ def _temporal_phase1(htm, learning, updateSegments):
                 
         #Learning Phase 1, p41
         if learning and not learningCellChosen:
-            cell, seg = col.bestCell(nextStep=True)
+            cell, seg = col.bestCell(nextStep=False)
             cell.learning = True
             
             if seg is None:

@@ -23,8 +23,15 @@ INPUT_BIAS_STD_DEV = config.getfloat('init','input_bias_std_dev')
 EXTENSION_NEXT_STEP_PENALTY = config.getboolean('extensions', 'next_step_penalty')
 
 class HTM(object):
+    
+    dimensions = 2 #hard-coded for now
+    
     def __init__(self, cellsPerColumn=None):
         self.inhibitionRadius = config.getint('init', 'inhibitionRadius')
+        
+        impliedSparsity = float(config.getint('constants','desiredLocalActivity'))/(self.inhibitionRadius**self.dimensions)
+        self.impliedSparsity = min(impliedSparsity, 1.0)
+        
         if cellsPerColumn:
             self.cellsPerColumn = cellsPerColumn
         else:
@@ -97,36 +104,35 @@ class HTM(object):
         return len(self._inputCells[0])
         
     def imagineNext(self):
-        'project down estimates for next time step to the input cells'
+        'project down estimates for next time step to the input cells, and step through'
         self._imagineStimulate(self.columns)
-        return self._imagineOverride(self._inputCells)
+        self._imagineOverride(self._inputCells)
+        self.__executeOne(False)
+        
+    @classmethod
+    def stimulateFromColumns(cls, columns, columnFilter):
+        for col in columns:
+            if columnFilter(col):
+                permanences = map(lambda syn: syn.permanence, col.synapsesConnected)
+                down_scale = float(sum(permanences))
+                
+                for synapse in col.synapsesConnected:
+                    synapse.input.stimulate(synapse.permanence / down_scale)
     
     @classmethod
     def _imagineStimulate(cls, columns):
         'testable step one of imagineNext'
-        for col in columns:
-            if col.predicting:
-                down_scale = len(col.synapsesConnected)
-                activityPerSynapse = float(1) / down_scale
-                
-                for synapse in col.synapsesConnected:
-                    synapse.input.stimulate(activityPerSynapse)
+        cls.stimulateFromColumns(columns, lambda col: col.predictingNext)
                     
     @classmethod
     def _imagineOverride(cls, inputCells):
         'testable step two of imagineNext'
                 
-        #flatten cell matrix
-        allInputs = []
+        cls.normalize_input_stimulation(inputCells)
+        
         for row in inputCells:
             for cell in row:
-                allInputs.append(cell)
-                
-        maxStim = max(map(lambda inCell: inCell.stimulation, allInputs))
-        if maxStim:
-            for inCell in allInputs:
-                inCell.stimulation /= maxStim
-                inCell.override()
+                cell.override()
         
     def executeOnce(self, data, learning=True, postTick=None):
         '''
@@ -248,8 +254,22 @@ class HTM(object):
         radii = []
         for c in self.columns:
             for syn in c.synapsesConnected:
-                radii.append(((c.x-syn.input.x)**2 + (c.y-syn.input.y)**2)**0.5)
+                radius = ((c.x-syn.input.x)**2 + (c.y-syn.input.y)**2)**0.5
+                if radius!=0:
+                    radii.append(radius)
         return sum(radii)/len(radii)
+    
+    @classmethod
+    def _max_input_stimulation(cls, inputCells):
+        return max(cell.stimulation for row in inputCells for cell in row)
+    
+    @classmethod
+    def normalize_input_stimulation(cls, inputCells):
+        maxStim = cls._max_input_stimulation(inputCells)
+        if maxStim:
+            for row in inputCells:
+                for cell in row:
+                    cell.stimulation /= maxStim
 
 class UpdateSegments(DictDefault):
     
