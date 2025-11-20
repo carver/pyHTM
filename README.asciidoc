@@ -1,7 +1,7 @@
 pyHTM - Hierarchical Temporal Memory in Python
 ==============================================
 
-_Note: http://www.numenta.com/[Numenta] reserves certain patent rights. See Intellectual Property for details._
+IMPORTANT: This project was a fun exploration, but I don't maintain it, and haven't for many years. It's left up only for archival purposes.
 
 == Summary
 
@@ -34,6 +34,9 @@ python src/htm_main.py
 ** Build UI to configure and run HTM networks
 ** Optimize for speed, never sacrificing code readability.
 
+== Legal
+
+_Note: http://www.numenta.com/[Numenta] reserves certain patent rights. See Intellectual Property for details._
 
 == Status
 
@@ -69,3 +72,4 @@ A section of this code, found in the numenta package, is a direct translation fr
 == Markdown Rant
 
 Markdown reliably did everything in ways other than I expected it to, and did it with an ugly smile.  You'll notice a commit history on README.markdown with profanity.  I was pleasantly surprised to find the alternative: asciidoc.  It comes with a http://powerman.name/doc/asciidoc[cheat sheet] and a http://andrewk.webfactional.com/asciidoc.php[web preview], and looks beautiful.  Well, it looked beautiful on the web preview, before Github applied their dull-gray css.
+
